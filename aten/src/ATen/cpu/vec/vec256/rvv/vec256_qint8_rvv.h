@@ -32,25 +32,30 @@ struct Vectorized<c10::qint8> {
     using value_type = typename c10::qint8::underlying;
 
     Vectorized() {}
-    Vectorized(vint8m2_t v) : vals(v) {}
+    Vectorized(vint8m2_t v) {
+      __riscv_vse8_v_i8m2 (vals, v, VQINT8_VL);
+    }
     // Broadcast constructor
     Vectorized(const c10::qint8& val) {
-        vals = __riscv_vmv_v_x_i8m2(val.val_, VQINT8_VL);
+      vint8m2_t v = __riscv_vmv_v_x_i8m2(val.val_, VQINT8_VL);
+      __riscv_vse8_v_i8m2 (vals, v, VQINT8_VL);
     }
 
-    Vectorized(const Vectorized<c10::qint8>& other) : vals(other.vals) {}
+    Vectorized(const Vectorized<c10::qint8>& other) {
+      std::memcpy (vals, other.vals, sizeof (vals));
+    }
 
     operator vint8m2_t() const {
-        return vals;
+      return __riscv_vle8_v_i8m2(this->vals, VQINT8_VL);
     }
 
     void store(void* ptr, int count = size()) const {
-        __riscv_vse8_v_i8m2(reinterpret_cast<value_type*>(ptr), vals, count);
+      std::memcpy(ptr, this->vals, count);
     }
 
     static Vectorized<c10::qint8> loadu(const void* ptr, int count = size()) {
-        vint8m2_t zero_vec = __riscv_vmv_v_x_i8m2(0, VQINT8_VL);
-        return __riscv_vle8_v_i8m2_tu(zero_vec, reinterpret_cast<const value_type*>(ptr), count);
+      vint8m2_t zero_vec = __riscv_vmv_v_x_i8m2(0, VQINT8_VL);
+      return __riscv_vle8_v_i8m2_tu(zero_vec, reinterpret_cast<const value_type*>(ptr), count);
     }
 
  public:
@@ -58,6 +63,7 @@ struct Vectorized<c10::qint8> {
       Vectorized<float> scale,
       Vectorized<float> zero_point,
       Vectorized<float> scale_zp_premul) const {
+        vint8m2_t vals = __riscv_vle8_v_i8m2(this->vals, VQINT8_VL);
         vint64m2_t i64_vec= __riscv_vreinterpret_v_i8m2_i64m2(vals);
 
         vint64m2_t int_val0 = __riscv_vslidedown_vx_i64m2(i64_vec, 0, 4);
@@ -93,6 +99,7 @@ struct Vectorized<c10::qint8> {
     float_vec_return_type dequantize(
       Vectorized<float> scale,
       Vectorized<float> zero_point) const {
+        vint8m2_t vals = __riscv_vle8_v_i8m2(this->vals, VQINT8_VL);
         vint64m2_t i64_vec= __riscv_vreinterpret_v_i8m2_i64m2(vals);
 
         vint64m2_t int_val0 = __riscv_vslidedown_vx_i64m2(i64_vec, 0, 4);
@@ -169,11 +176,15 @@ struct Vectorized<c10::qint8> {
     }
 
     Vectorized<c10::qint8> maximum(Vectorized<c10::qint8> b) const {
-        return __riscv_vmax_vv_i8m2(vals, b.vals, VQINT8_VL);
+      vint8m2_t x = __riscv_vle8_v_i8m2(this->vals, VQINT8_VL);
+      vint8m2_t y = __riscv_vle8_v_i8m2(b.vals, VQINT8_VL);
+      return __riscv_vmax_vv_i8m2(x, y, VQINT8_VL);
     }
 
     Vectorized<c10::qint8> minimum(Vectorized<c10::qint8> b) const {
-        return __riscv_vmin_vv_i8m2(vals, b.vals, VQINT8_VL);
+      vint8m2_t x = __riscv_vle8_v_i8m2(this->vals, VQINT8_VL);
+      vint8m2_t y = __riscv_vle8_v_i8m2(b.vals, VQINT8_VL);
+      return __riscv_vmin_vv_i8m2(x, y, VQINT8_VL);
     }
 
     Vectorized<c10::qint8> relu(Vectorized<c10::qint8> zero_point) const {
@@ -183,13 +194,17 @@ struct Vectorized<c10::qint8> {
     Vectorized<c10::qint8> relu6(
       Vectorized<c10::qint8> zero_point,
       Vectorized<c10::qint8> q_six) {
+        vint8m2_t vals = __riscv_vle8_v_i8m2(this->vals, VQINT8_VL);
+        vint8m2_t zero_point_vals = __riscv_vle8_v_i8m2(zero_point.vals, VQINT8_VL);
+        vint8m2_t q_six_vals = __riscv_vle8_v_i8m2(q_six.vals, VQINT8_VL);
         return __riscv_vmin_vv_i8m2(
-          __riscv_vmax_vv_i8m2(vals, zero_point.vals, VQINT8_VL),
-          q_six.vals,
+          __riscv_vmax_vv_i8m2(vals, zero_point_vals, VQINT8_VL),
+          q_six_vals,
           VQINT8_VL);
     }
 
     int_vec_return_type widening_subtract(Vectorized<c10::qint8> b) const {
+        vint8m2_t vals = __riscv_vle8_v_i8m2(this->vals, VQINT8_VL);
         vint64m2_t vals_i64_vec= __riscv_vreinterpret_v_i8m2_i64m2(vals);
 
         vint64m2_t int_val0 = __riscv_vslidedown_vx_i64m2(vals_i64_vec, 0, 4);
@@ -207,7 +222,8 @@ struct Vectorized<c10::qint8> {
         vint32m2_t int32_val2 = __riscv_vsext_vf4_i32m2(__riscv_vlmul_trunc_v_i8m2_i8mf2(i8_val2), 8);
         vint32m2_t int32_val3 = __riscv_vsext_vf4_i32m2(__riscv_vlmul_trunc_v_i8m2_i8mf2(i8_val3), 8);
 
-        vint64m2_t b_i64_vec= __riscv_vreinterpret_v_i8m2_i64m2(b.vals);
+        vint8m2_t b_vals = __riscv_vle8_v_i8m2(b.vals, VQINT8_VL);
+        vint64m2_t b_i64_vec= __riscv_vreinterpret_v_i8m2_i64m2(b_vals);
 
         vint64m2_t int_b0 = __riscv_vslidedown_vx_i64m2(b_i64_vec, 0, 4);
         vint64m2_t int_b1 = __riscv_vslidedown_vx_i64m2(b_i64_vec, 1, 4);

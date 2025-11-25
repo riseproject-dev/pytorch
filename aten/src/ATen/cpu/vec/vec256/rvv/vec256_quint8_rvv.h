@@ -9,6 +9,7 @@
 namespace at {
 namespace vec {
 inline namespace CPU_CAPABILITY {
+
 template <>
 struct Vectorized<c10::quint8> {
  private:
@@ -31,20 +32,25 @@ struct Vectorized<c10::quint8> {
     using value_type = typename c10::quint8::underlying;
 
     Vectorized() {}
-    Vectorized(vuint8m2_t v) : vals(v) {}
+    Vectorized(vuint8m2_t v) {
+      __riscv_vse8_v_u8m2 (vals, v, VQUINT8_VL);
+    }
     // Broadcast constructor
     Vectorized(const c10::quint8& val) {
-        vals = __riscv_vmv_v_x_u8m2(val.val_, VQUINT8_VL);
+      vuint8m2_t v = __riscv_vmv_v_x_u8m2(val.val_, VQUINT8_VL);
+      __riscv_vse8_v_u8m2 (vals, v, VQUINT8_VL);
     }
 
-    Vectorized(const Vectorized<c10::quint8>& other) : vals(other.vals) {}
+    Vectorized(const Vectorized<c10::quint8>& other) {
+      std::memcpy (vals, other.vals, sizeof (vals));
+    }
 
     operator vuint8m2_t() const {
-        return vals;
+      return __riscv_vle8_v_u8m2(this->vals, VQUINT8_VL);
     }
 
     void store(void* ptr, int count = size()) const {
-        __riscv_vse8_v_u8m2(reinterpret_cast<value_type*>(ptr), vals, count);
+      std::memcpy(ptr, this->vals, count);
     }
 
     static Vectorized<c10::quint8> loadu(const void* ptr, int count = size()) {
@@ -57,6 +63,7 @@ struct Vectorized<c10::quint8> {
       Vectorized<float> scale,
       Vectorized<float> zero_point,
       Vectorized<float> scale_zp_premul) const {
+        vuint8m2_t vals = __riscv_vle8_v_u8m2(this->vals, VQUINT8_VL);
         vuint64m2_t u64_vec= __riscv_vreinterpret_v_u8m2_u64m2(vals);
 
         vuint64m2_t uint_val0 = __riscv_vslidedown_vx_u64m2(u64_vec, 0, 4);
@@ -92,6 +99,7 @@ struct Vectorized<c10::quint8> {
     float_vec_return_type dequantize(
       Vectorized<float> scale,
       Vectorized<float> zero_point) const {
+        vuint8m2_t vals = __riscv_vle8_v_u8m2(this->vals, VQUINT8_VL);
         vuint64m2_t u64_vec= __riscv_vreinterpret_v_u8m2_u64m2(vals);
 
         vuint64m2_t uint_val0 = __riscv_vslidedown_vx_u64m2(u64_vec, 0, 4);
@@ -168,11 +176,15 @@ struct Vectorized<c10::quint8> {
     }
 
     Vectorized<c10::quint8> maximum(Vectorized<c10::quint8> b) const {
-        return __riscv_vmaxu_vv_u8m2(vals, b.vals, VQUINT8_VL);
+        vuint8m2_t x = __riscv_vle8_v_u8m2(this->vals, VQUINT8_VL);
+        vuint8m2_t y = __riscv_vle8_v_u8m2(b.vals, VQUINT8_VL);
+        return __riscv_vmaxu_vv_u8m2(x, y, VQUINT8_VL);
     }
 
     Vectorized<c10::quint8> minimum(Vectorized<c10::quint8> b) const {
-        return __riscv_vminu_vv_u8m2(vals, b.vals, VQUINT8_VL);
+        vuint8m2_t x = __riscv_vle8_v_u8m2(this->vals, VQUINT8_VL);
+        vuint8m2_t y = __riscv_vle8_v_u8m2(b.vals, VQUINT8_VL);
+        return __riscv_vminu_vv_u8m2(x, y, VQUINT8_VL);
     }
 
     Vectorized<c10::quint8> relu(Vectorized<c10::quint8> zero_point) const {
@@ -182,13 +194,17 @@ struct Vectorized<c10::quint8> {
     Vectorized<c10::quint8> relu6(
       Vectorized<c10::quint8> zero_point,
       Vectorized<c10::quint8> q_six) {
+        vuint8m2_t vals = __riscv_vle8_v_u8m2(this->vals, VQUINT8_VL);
+        vuint8m2_t zero_point_vals = __riscv_vle8_v_u8m2(zero_point.vals, VQUINT8_VL);
+        vuint8m2_t q_six_vals = __riscv_vle8_v_u8m2(q_six.vals, VQUINT8_VL);
         return __riscv_vminu_vv_u8m2(
-          __riscv_vmaxu_vv_u8m2(vals, zero_point.vals, VQUINT8_VL),
-          q_six.vals,
+          __riscv_vmaxu_vv_u8m2(vals, zero_point_vals, VQUINT8_VL),
+          q_six_vals,
           VQUINT8_VL);
     }
 
     int_vec_return_type widening_subtract(Vectorized<c10::quint8> b) const {
+        vuint8m2_t vals = __riscv_vle8_v_u8m2(this->vals, VQUINT8_VL);
         vuint64m2_t vals_u64_vec= __riscv_vreinterpret_v_u8m2_u64m2(vals);
 
         vuint64m2_t uint_val0 = __riscv_vslidedown_vx_u64m2(vals_u64_vec, 0, 4);
@@ -206,7 +222,8 @@ struct Vectorized<c10::quint8> {
         vint32m2_t int32_val2 = __riscv_vreinterpret_v_u32m2_i32m2(__riscv_vzext_vf4_u32m2(__riscv_vlmul_trunc_v_u8m2_u8mf2(u8_val2), 8));
         vint32m2_t int32_val3 = __riscv_vreinterpret_v_u32m2_i32m2(__riscv_vzext_vf4_u32m2(__riscv_vlmul_trunc_v_u8m2_u8mf2(u8_val3), 8));
 
-        vuint64m2_t b_u64_vec= __riscv_vreinterpret_v_u8m2_u64m2(b.vals);
+	vuint8m2_t b_vals = __riscv_vle8_v_u8m2(b.vals, VQUINT8_VL);
+        vuint64m2_t b_u64_vec= __riscv_vreinterpret_v_u8m2_u64m2(b_vals);
 
         vuint64m2_t uint_b0 = __riscv_vslidedown_vx_u64m2(b_u64_vec, 0, 4);
         vuint64m2_t uint_b1 = __riscv_vslidedown_vx_u64m2(b_u64_vec, 1, 4);

@@ -24,33 +24,47 @@ public:
     return 8;
   }
   Vectorized() {}
-  Vectorized(vfloat32m2_t v) : values(v) {}
+  Vectorized(vfloat32m2_t v) {
+    __riscv_vse32_v_f32m2 (values, v, VFLOAT32_VL);
+  }
   Vectorized(float val) {
-    values = __riscv_vfmv_v_f_f32m2(val, VFLOAT32_VL);
+    vfloat32m2_t v = __riscv_vfmv_v_f_f32m2(val, VFLOAT32_VL);
+    __riscv_vse32_v_f32m2 (values, v, VFLOAT32_VL);
   }
   Vectorized(float val0, float val1, float val2, float val3,
     float val4, float val5, float val6, float val7) {
-    float v[] = {val0, val1, val2, val3, val4, val5, val6, val7};
-    values = __riscv_vle32_v_f32m2(reinterpret_cast<float*>(v), VFLOAT32_VL);
+    values[0] = val0;
+    values[1] = val1;
+    values[2] = val2;
+    values[3] = val3;
+    values[4] = val4;
+    values[5] = val5;
+    values[6] = val6;
+    values[7] = val7;
   }
 
   operator vfloat32m2_t() const {
-    return values;
+    return __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
   }
 
   template <int64_t mask>
   static Vectorized<float> blend(const Vectorized<float>& a, const Vectorized<float>& b) {
     vint64m1_t  mask_vec = __riscv_vmv_v_x_i64m1(mask, 1);
     vbool16_t bool_vec  = __riscv_vreinterpret_v_i64m1_b16(mask_vec);
-    return __riscv_vmerge_vvm_f32m2(a.values, b.values, bool_vec, VFLOAT32_VL);
+    vfloat32m2_t a_values = __riscv_vle32_v_f32m2(a.values, VFLOAT32_VL);
+    vfloat32m2_t b_values = __riscv_vle32_v_f32m2(b.values, VFLOAT32_VL);
+    return __riscv_vmerge_vvm_f32m2(a_values, b_values, bool_vec, VFLOAT32_VL);
   }
 
   static Vectorized<float> blendv(const Vectorized<float>& a, const Vectorized<float>& b,
                               const Vectorized<float>& mask) {
-    vuint32m2_t mask_u32 = __riscv_vreinterpret_v_f32m2_u32m2(mask.values);
+    vfloat32m2_t mask_values = __riscv_vle32_v_f32m2(mask.values, VFLOAT32_VL);
+    vuint32m2_t mask_u32 = __riscv_vreinterpret_v_f32m2_u32m2(mask_values);
     vuint32m2_t and_u32 = __riscv_vand_vx_u32m2(mask_u32, 0x01, VFLOAT32_VL);
     vbool16_t  bool_vec = __riscv_vmseq_vx_u32m2_b16(and_u32, 0x01, VFLOAT32_VL);
-    return __riscv_vmerge_vvm_f32m2(a.values, b.values, bool_vec, VFLOAT32_VL);
+    vfloat32m2_t a_values = __riscv_vle32_v_f32m2(a.values, VFLOAT32_VL);
+    vfloat32m2_t b_values = __riscv_vle32_v_f32m2(b.values, VFLOAT32_VL);
+    return __riscv_vmerge_vvm_f32m2(a_values, b_values, bool_vec, VFLOAT32_VL);
   }
 
   template<typename step_t>
@@ -119,18 +133,7 @@ public:
   }
 
   void store(void* ptr, int64_t count = size()) const {
-#ifdef RVV_SUPPORT_UNALIGN
-    __riscv_vse32_v_f32m2(reinterpret_cast<float*>(ptr), values, count);
-#else
-    // If the address of ptr is not aligned, the performance will be very slow.
-    if (reinterpret_cast<uintptr_t>(ptr) & 0x3) {
-      float tmp_values[size()];
-      __riscv_vse32_v_f32m2(reinterpret_cast<float*>(tmp_values), values, VFLOAT32_VL);
-      std::memcpy(ptr, tmp_values, count * sizeof(float));
-    } else {
-      __riscv_vse32_v_f32m2(reinterpret_cast<float*>(ptr), values, count);
-    }
-#endif
+    std::memcpy(ptr, this->values, count * sizeof(float));
   }
 
   const float& operator[](int idx) const = delete;
@@ -149,6 +152,7 @@ public:
   }
 
   Vectorized<float> isnan() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     vuint32m2_t classify= __riscv_vfclass_v_u32m2(values, VFLOAT32_VL);
     vbool16_t isSNaN = __riscv_vmseq_vx_u32m2_b16(classify, 0x100, VFLOAT32_VL);
     vbool16_t isQNaN = __riscv_vmseq_vx_u32m2_b16(classify, 0x200, VFLOAT32_VL);
@@ -179,6 +183,7 @@ public:
   }
 
   Vectorized<float> abs() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(__riscv_vfabs_v_f32m2(values, VFLOAT32_VL));
   }
   Vectorized<float> angle() const {
@@ -197,42 +202,56 @@ public:
     return *this;
   }
   Vectorized<float> acos() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_acosfx_u10rvvm2(values));
   }
   Vectorized<float> acosh() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_acoshfx_u10rvvm2(values));
   }
   Vectorized<float> asin() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_asinfx_u10rvvm2(values));
   }
   Vectorized<float> atan() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_atanfx_u10rvvm2(values));
   }
   Vectorized<float> atanh() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_atanhfx_u10rvvm2(values));
   }
   Vectorized<float> atan2(const Vectorized<float> &exp) const {
-    return Vectorized<float>(Sleef_atan2fx_u10rvvm2(values, exp.values));
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(exp.values, VFLOAT32_VL);
+    return Vectorized<float>(Sleef_atan2fx_u10rvvm2(a, b));
   }
   Vectorized<float> copysign(const Vectorized<float> &sign) const {
-    return Vectorized<float>(Sleef_copysignfx_rvvm2(values, sign.values));
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(sign.values, VFLOAT32_VL);
+    return Vectorized<float>(Sleef_copysignfx_rvvm2(a, b));
   }
   Vectorized<float> erf() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_erffx_u10rvvm2(values));
   }
   Vectorized<float> erfc() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_erfcfx_u15rvvm2(values));
   }
   Vectorized<float> erfinv() const {
     return map(calc_erfinv);
   }
   Vectorized<float> exp() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_expfx_u10rvvm2(values));
   }
   Vectorized<float> exp2() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_exp2fx_u10rvvm2(values));
   }
   Vectorized<float> expm1() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_expm1fx_u10rvvm2(values));
   }
   Vectorized<float> exp_u20() const {
@@ -242,10 +261,14 @@ public:
     return exp();
   }
   Vectorized<float> fmod(const Vectorized<float>& q) const {
-    return Vectorized<float>(Sleef_fmodfx_rvvm2(values, q.values));
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(q.values, VFLOAT32_VL);
+    return Vectorized<float>(Sleef_fmodfx_rvvm2(a, b));
   }
   Vectorized<float> hypot(const Vectorized<float> &b) const {
-    return Vectorized<float>(Sleef_hypotfx_u05rvvm2(values, b.values));
+    vfloat32m2_t x = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t y = __riscv_vle32_v_f32m2(b.values, VFLOAT32_VL);
+    return Vectorized<float>(Sleef_hypotfx_u05rvvm2(x, y));
   }
   Vectorized<float> i0() const {
     return map(calc_i0);
@@ -277,31 +300,41 @@ public:
     return loadu(tmp);
   }
   Vectorized<float> log() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_logfx_u10rvvm2(values));
   }
   Vectorized<float> log10() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_log10fx_u10rvvm2(values));
   }
   Vectorized<float> log1p() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_log1pfx_u10rvvm2(values));
   }
   Vectorized<float> log2() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_log2fx_u10rvvm2(values));
   }
   Vectorized<float> nextafter(const Vectorized<float> &b) const {
-    return Vectorized<float>(Sleef_nextafterfx_rvvm2(values, b.values));
+    vfloat32m2_t x = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t y = __riscv_vle32_v_f32m2(b.values, VFLOAT32_VL);
+    return Vectorized<float>(Sleef_nextafterfx_rvvm2(x, y));
   }
   Vectorized<float> frac() const;
   Vectorized<float> sin() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_sinfx_u10rvvm2(values));
   }
   Vectorized<float> sinh() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_sinhfx_u10rvvm2(values));
   }
   Vectorized<float> cos() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_cosfx_u10rvvm2(values));
   }
   Vectorized<float> cosh() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_coshfx_u10rvvm2(values));
   }
   Vectorized<float> ceil() const {
@@ -311,28 +344,34 @@ public:
     return map(at::native::floor_impl);
   }
   Vectorized<float> neg() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(__riscv_vfneg_v_f32m2(values, VFLOAT32_VL));
   }
   Vectorized<float> round() const {
     return map(at::native::round_impl);
   }
   Vectorized<float> tan() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_tanfx_u10rvvm2(values));
   }
   Vectorized<float> tanh() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_tanhfx_u10rvvm2(values));
   }
   Vectorized<float> trunc() const {
     return map(at::native::trunc_impl);
   }
   Vectorized<float> lgamma() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(Sleef_lgammafx_u10rvvm2(values));
   }
   Vectorized<float> sqrt() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     return Vectorized<float>(
          __riscv_vfsqrt_v_f32m2(values, VFLOAT32_VL));
   }
   Vectorized<float> reciprocal() const {
+    vfloat32m2_t values = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
     vfloat32m2_t res = __riscv_vfdiv_vv_f32m2(
       __riscv_vfmv_v_f_f32m2(1.0f, VFLOAT32_VL),
       values,
@@ -343,11 +382,15 @@ public:
     return this->sqrt().reciprocal();
   }
   Vectorized<float> pow(const Vectorized<float> &exp) const {
-    return Vectorized<float>(Sleef_powfx_u10rvvm2(values, exp.values));
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(exp.values, VFLOAT32_VL);
+    return Vectorized<float>(Sleef_powfx_u10rvvm2(a, b));
   }
 
   Vectorized<float> operator==(const Vectorized<float>& other) const {
-    vbool16_t cmp_res = __riscv_vmfeq_vv_f32m2_b16(values, other.values, VFLOAT32_VL);
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(other.values, VFLOAT32_VL);
+    vbool16_t cmp_res = __riscv_vmfeq_vv_f32m2_b16(a, b, VFLOAT32_VL);
     vuint32m2_t merge_res = __riscv_vmerge_vvm_u32m2(
       __riscv_vmv_v_x_u32m2(0x0, VFLOAT32_VL),
       __riscv_vmv_v_x_u32m2(UINT32_MAX, VFLOAT32_VL),
@@ -358,7 +401,9 @@ public:
   }
 
   Vectorized<float> operator!=(const Vectorized<float>& other) const {
-    vbool16_t cmp_res = __riscv_vmfeq_vv_f32m2_b16(values, other.values, VFLOAT32_VL);
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(other.values, VFLOAT32_VL);
+    vbool16_t cmp_res = __riscv_vmfeq_vv_f32m2_b16(a, b, VFLOAT32_VL);
     vuint32m2_t merge_res = __riscv_vmerge_vvm_u32m2(
       __riscv_vmv_v_x_u32m2(0x0, VFLOAT32_VL),
       __riscv_vmv_v_x_u32m2(UINT32_MAX, VFLOAT32_VL),
@@ -369,7 +414,9 @@ public:
   }
 
   Vectorized<float> operator<(const Vectorized<float>& other) const {
-    vbool16_t cmp_res = __riscv_vmflt_vv_f32m2_b16(values, other.values, VFLOAT32_VL);
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(other.values, VFLOAT32_VL);
+    vbool16_t cmp_res = __riscv_vmflt_vv_f32m2_b16(a, b, VFLOAT32_VL);
     vuint32m2_t merge_res = __riscv_vmerge_vvm_u32m2(
       __riscv_vmv_v_x_u32m2(0x0, VFLOAT32_VL),
       __riscv_vmv_v_x_u32m2(UINT32_MAX, VFLOAT32_VL),
@@ -380,7 +427,9 @@ public:
   }
 
   Vectorized<float> operator<=(const Vectorized<float>& other) const {
-    vbool16_t cmp_res = __riscv_vmfle_vv_f32m2_b16(values, other.values, VFLOAT32_VL);
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(other.values, VFLOAT32_VL);
+    vbool16_t cmp_res = __riscv_vmfle_vv_f32m2_b16(a, b, VFLOAT32_VL);
     vuint32m2_t merge_res = __riscv_vmerge_vvm_u32m2(
       __riscv_vmv_v_x_u32m2(0x0, VFLOAT32_VL),
       __riscv_vmv_v_x_u32m2(UINT32_MAX, VFLOAT32_VL),
@@ -391,7 +440,9 @@ public:
   }
 
   Vectorized<float> operator>(const Vectorized<float>& other) const {
-    vbool16_t cmp_res = __riscv_vmfgt_vv_f32m2_b16(values, other.values, VFLOAT32_VL);
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(other.values, VFLOAT32_VL);
+    vbool16_t cmp_res = __riscv_vmfgt_vv_f32m2_b16(a, b, VFLOAT32_VL);
     vuint32m2_t merge_res = __riscv_vmerge_vvm_u32m2(
       __riscv_vmv_v_x_u32m2(0x0, VFLOAT32_VL),
       __riscv_vmv_v_x_u32m2(UINT32_MAX, VFLOAT32_VL),
@@ -402,7 +453,9 @@ public:
   }
 
   Vectorized<float> operator>=(const Vectorized<float>& other) const {
-    vbool16_t cmp_res = __riscv_vmfge_vv_f32m2_b16(values, other.values, VFLOAT32_VL);
+    vfloat32m2_t a = __riscv_vle32_v_f32m2(this->values, VFLOAT32_VL);
+    vfloat32m2_t b = __riscv_vle32_v_f32m2(other.values, VFLOAT32_VL);
+    vbool16_t cmp_res = __riscv_vmfge_vv_f32m2_b16(a, b, VFLOAT32_VL);
     vuint32m2_t merge_res = __riscv_vmerge_vvm_u32m2(
       __riscv_vmv_v_x_u32m2(0x0, VFLOAT32_VL),
       __riscv_vmv_v_x_u32m2(UINT32_MAX, VFLOAT32_VL),

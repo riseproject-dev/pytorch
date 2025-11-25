@@ -33,20 +33,21 @@ struct Vectorized<c10::qint32> {
     using value_type = typename c10::qint32::underlying;
 
     Vectorized() {}
-    Vectorized(vint32m2_t v) : vals(v) {}
+    Vectorized(vint32m2_t v) {
+      __riscv_vse32_v_i32m2 (vals, v, VQINT32_VL);
+    }
     // Broadcast constructor
     Vectorized(const c10::qint32& val) {
-        vals =  __riscv_vmv_v_x_i32m2(val.val_, VQINT32_VL);
+      vint32m2_t v = __riscv_vmv_v_x_i32m2(val.val_, VQINT32_VL);
+      __riscv_vse32_v_i32m2 (vals, v, VQINT32_VL);
     }
 
     operator vint32m2_t() const {
-        return vals;
+      return __riscv_vle32_v_i32m2(this->vals, VQINT32_VL);
     }
 
     void store(void* ptr, int count = size()) const {
-        value_type tmp_values[size()];
-        __riscv_vse32_v_i32m2(reinterpret_cast<value_type*>(tmp_values), vals, VQINT32_VL);
-        std::memcpy(ptr, tmp_values, count * sizeof(value_type));
+      std::memcpy(ptr, this->vals, count * sizeof(value_type));
     }
 
     static Vectorized<c10::qint32> loadu(const void* ptr, int count = size()) {
@@ -63,6 +64,7 @@ struct Vectorized<c10::qint32> {
       Vectorized<float> scale,
       Vectorized<float> /*zero_point*/,
       Vectorized<float> scale_zp_premul) const {
+        vint32m2_t vals = __riscv_vle32_v_i32m2(this->vals, VQINT32_VL);
         vfloat32m2_t float_vals = __riscv_vfcvt_f_x_v_f32m2(vals, VQINT32_VL);
         return {vec::fmadd(scale, Vectorized<float>(float_vals), scale_zp_premul)};
     }
@@ -70,6 +72,7 @@ struct Vectorized<c10::qint32> {
     float_vec_return_type dequantize(
       Vectorized<float> scale,
       Vectorized<float> zero_point) const {
+        vint32m2_t vals = __riscv_vle32_v_i32m2(this->vals, VQINT32_VL);
         vfloat32m2_t float_vals = __riscv_vfcvt_f_x_v_f32m2(vals, VQINT32_VL);
         return {(Vectorized<float>(float_vals) - zero_point) * scale};
     }
@@ -87,11 +90,15 @@ struct Vectorized<c10::qint32> {
     }
 
     Vectorized<c10::qint32> maximum(Vectorized<c10::qint32> b) const {
-        return __riscv_vmax_vv_i32m2(vals, b.vals, VQINT32_VL);
+        vint32m2_t x = __riscv_vle32_v_i32m2(this->vals, VQINT32_VL);
+	vint32m2_t y = __riscv_vle32_v_i32m2(b.vals, VQINT32_VL);
+        return __riscv_vmax_vv_i32m2(x, y, VQINT32_VL);
     }
 
     Vectorized<c10::qint32> minimum(Vectorized<c10::qint32> b) const {
-        return __riscv_vmin_vv_i32m2(vals, b.vals, VQINT32_VL);
+        vint32m2_t x = __riscv_vle32_v_i32m2(this->vals, VQINT32_VL);
+	vint32m2_t y = __riscv_vle32_v_i32m2(b.vals, VQINT32_VL);
+        return __riscv_vmin_vv_i32m2(x, y, VQINT32_VL);
     }
 
     Vectorized<c10::qint32> relu(Vectorized<c10::qint32> zero_point) const {
@@ -101,14 +108,19 @@ struct Vectorized<c10::qint32> {
     Vectorized<c10::qint32> relu6(
       Vectorized<c10::qint32> zero_point,
       Vectorized<c10::qint32> q_six) {
+        vint32m2_t vals = __riscv_vle32_v_i32m2(this->vals, VQINT32_VL);
+	vint32m2_t zero_point_vals = __riscv_vle32_v_i32m2(zero_point.vals, VQINT32_VL);
+	vint32m2_t q_six_vals = __riscv_vle32_v_i32m2(q_six.vals, VQINT32_VL);
         return __riscv_vmin_vv_i32m2(
-            __riscv_vmax_vv_i32m2(vals, zero_point.vals, VQINT32_VL),
-            q_six.vals,
+            __riscv_vmax_vv_i32m2(vals, zero_point_vals, VQINT32_VL),
+            q_six_vals,
             VQINT32_VL);
     }
 
     int_vec_return_type widening_subtract(Vectorized<c10::qint32> b) const {
-        return {__riscv_vsub_vv_i32m2(vals, b, VQINT32_VL)};
+        vint32m2_t x = __riscv_vle32_v_i32m2(this->vals, VQINT32_VL);
+	vint32m2_t y = __riscv_vle32_v_i32m2(b.vals, VQINT32_VL);
+        return {__riscv_vsub_vv_i32m2(x, y, VQINT32_VL)};
     }
 
     static Vectorized<c10::qint32> requantize_from_int(
