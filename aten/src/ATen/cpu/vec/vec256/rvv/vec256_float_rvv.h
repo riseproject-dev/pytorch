@@ -21,7 +21,7 @@ public:
   using value_type = float;
   using size_type = int;
   static constexpr size_type size() {
-    return 8;
+    return VFLOAT32_VL;
   }
   Vectorized() {}
   Vectorized(vfloat32m2_t v) {

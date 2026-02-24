@@ -5,10 +5,6 @@
 
 #if defined(CPU_CAPABILITY_RVV)
 
-// TBD: currently hardwired to assume VLEN:128 x LMUL:2 => VLMAX:256
-// allow this to be more flexible later
-#define CONFIG_VLMAX (256/8)
-
 typedef int8_t fixed_vint8m2_t[CONFIG_VLMAX / sizeof (int8_t)];
 typedef int16_t fixed_vint16m2_t[CONFIG_VLMAX / sizeof (int16_t)];
 typedef int32_t fixed_vint32m2_t[CONFIG_VLMAX / sizeof (int32_t)];
@@ -22,10 +18,9 @@ typedef uint64_t fixed_vuint64m2_t[CONFIG_VLMAX / sizeof (uint64_t)];
 typedef float fixed_vfloat32m2_t[CONFIG_VLMAX / sizeof (float)];
 typedef double fixed_vfloat64m2_t[CONFIG_VLMAX / sizeof (double)];
 
-// VL control uses only 256 bits
-#define VFLOAT32_VL  (2*__riscv_v_min_vlen/32)
-#define VQINT8_VL  (2*__riscv_v_min_vlen/8)
-#define VQUINT8_VL  (2*__riscv_v_min_vlen/8)
-#define VQINT32_VL  (2*__riscv_v_min_vlen/32)
+#define VFLOAT32_VL  (CONFIG_VLMAX_BITS / 32)
+#define VQINT8_VL  (CONFIG_VLMAX_BITS / 8)
+#define VQUINT8_VL  (CONFIG_VLMAX_BITS / 8)
+#define VQINT32_VL  (CONFIG_VLMAX_BITS / 32)
 
 #endif // defined(CPU_CAPABILITY_RVV)

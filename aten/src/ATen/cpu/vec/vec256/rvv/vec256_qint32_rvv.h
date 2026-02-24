@@ -18,14 +18,14 @@ struct Vectorized<c10::qint32> {
 
  public:
     static constexpr int size() {
-        return 8;
+      return VQINT32_VL;
     }
 
     static constexpr int float_num_vecs() {
-        return 1;
+      return size() / Vectorized<float>::size();
     }
     static constexpr int int_num_vecs() {
-        return 1;
+      return size() / Vectorized<int32_t>::size();
     }
 
     using float_vec_return_type = std::array<Vectorized<float>, 1>;
