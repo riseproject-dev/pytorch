@@ -2,7 +2,7 @@
 
 #include <ATen/cpu/vec/intrinsics.h>
 #include <ATen/cpu/vec/vec_base.h>
-#include <ATen/cpu/vec/vec256/rvv/rvv_helper.h>
+#include <ATen/cpu/vec/rvv/rvv_helper.h>
 #include <c10/util/quint8.h>
 #include <array>
 
