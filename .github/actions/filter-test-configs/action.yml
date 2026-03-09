@@ -24,6 +24,10 @@ inputs:
     type: string
     required: false
     default: ""
+  build_environment:
+    required: true
+    type: string
+    description: The build environment
 
 outputs:
   test-matrix:
@@ -61,7 +65,14 @@ runs:
   using: composite
   steps:
     - name: Setup uv
-      uses: pytorch/test-infra/.github/actions/setup-uv@main
+      if: ${{ inputs.build_environment != 'linux-riscv64-binary-manywheel' }}
+      uses: riseproject-dev/test-infra/.github/actions/setup-uv@rise-riscv-runners
+      with:
+        python-version: "3.12"
+
+    - name: Setup uv (riscv64)
+      if: ${{ inputs.build_environment == 'linux-riscv64-binary-manywheel' }}
+      uses: riseproject-dev/test-infra/.github/actions/setup-uv@rise-riscv-runners
       with:
         python-version: "3.12"
 

@@ -52,7 +52,7 @@ runs:
     - name: Checkout PyTorch
       id: first-checkout-attempt
       continue-on-error: true
-      uses: pytorch/test-infra/.github/actions/checkout@main
+      uses: riseproject-dev/test-infra/.github/actions/checkout@rise-riscv-runners
       env:
         filter: ${{ inputs.checkout-mode == 'blobless' && 'blob:none' || inputs.checkout-mode == 'treeless' && 'tree:0' || null }}
       with:
@@ -99,7 +99,7 @@ runs:
         mkdir "${GITHUB_WORKSPACE}"
 
     - name: Checkout PyTorch (try again)
-      uses: pytorch/test-infra/.github/actions/checkout@main
+      uses: riseproject-dev/test-infra/.github/actions/checkout@rise-riscv-runners
       env:
         filter: ${{ inputs.checkout-mode == 'blobless' && 'blob:none' || inputs.checkout-mode == 'treeless' && 'tree:0' || null }}
       if: ${{ steps.first-clean.outcome != 'success' || steps.first-checkout-attempt.outcome != 'success' }}

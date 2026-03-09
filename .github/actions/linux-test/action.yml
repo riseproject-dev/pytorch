@@ -71,7 +71,7 @@ runs:
 
     - name: Calculate docker image
       id: calculate-docker-image
-      uses: pytorch/test-infra/.github/actions/calculate-docker-image@main
+      uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@rise-riscv-runners
       with:
         docker-image-name: ${{ inputs.docker-image }}
 
@@ -85,7 +85,7 @@ runs:
         echo "docker pull ghcr.io/pytorch/ci-image:${tag/:/-}"
 
     - name: Pull docker image
-      uses: pytorch/test-infra/.github/actions/pull-docker-image@main
+      uses: riseproject-dev/test-infra/.github/actions/pull-docker-image@rise-riscv-runners
       with:
         docker-image: ${{ steps.calculate-docker-image.outputs.docker-image }}
 
@@ -96,7 +96,7 @@ runs:
 
     - name: Install nvidia driver, nvidia-docker runtime, set GPU_FLAG
       id: install-nvidia-driver
-      uses: pytorch/test-infra/.github/actions/setup-nvidia@main
+      uses: riseproject-dev/test-infra/.github/actions/setup-nvidia@rise-riscv-runners
       if: ${{ contains(inputs.build-environment, 'cuda') && !contains(matrix.config, 'nogpu') && steps.check_container_runner.outputs.IN_CONTAINER_RUNNER == 'false' }}
 
     - name: Setup GPU_FLAG for docker run
@@ -325,7 +325,7 @@ runs:
         path: ./**/core.[1-9]*
 
     - name: Teardown Linux
-      uses: pytorch/test-infra/.github/actions/teardown-linux@main
+      uses: riseproject-dev/test-infra/.github/actions/teardown-linux@rise-riscv-runners
       if: always() && steps.check_container_runner.outputs.IN_CONTAINER_RUNNER == 'false'
 
     # NB: We are currently having an intermittent GPU-related issue on G5 runners with
@@ -389,7 +389,7 @@ runs:
 
         # For runner with multiple GPUs, we also want to confirm that the number of GPUs are the
         # power of 2, i.e. 1, 2, 4, or 8. This is to avoid flaky test issue when one GPU fails
-        # https://github.com/pytorch/test-infra/issues/4000
+        # https://github.com/riseproject-dev/test-infra/issues/4000
         GPU_COUNT=$(nvidia-smi --list-gpus | wc -l)
         NVIDIA_SMI_STATUS=$?
 

@@ -25,7 +25,7 @@ runs:
   using: composite
   steps:
     - name: Setup uv
-      uses: pytorch/test-infra/.github/actions/setup-uv@main
+      uses: riseproject-dev/test-infra/.github/actions/setup-uv@rise-riscv-runners
       with:
         python-version: "3.12"
 
