@@ -80,7 +80,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/s390x/alpine"
       timeout-minutes: 420
       {%- elif "riscv64" in build_environment %}
-      runs_on: ubuntu-24.04-riscv # Provide by RISE RISC-V Runners GH App
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
       {%- elif config["gpu_arch_type"] == "rocm" %}

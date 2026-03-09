@@ -10,6 +10,7 @@ on:
     # NOTE: Meta Employees can trigger new nightlies using: https://fburl.com/trigger_pytorch_nightly_build
     branches:
       - nightly
+      - rise-riscv-runners
     tags:
       # NOTE: Binary build pipelines should only get triggered on release candidate builds
       # Release candidate tags look like: v1.11.0-rc1
@@ -40,16 +41,16 @@ concurrency:
 
 jobs:
   get-label-type:
-    if: github.repository_owner == 'pytorch'
+    # if: github.repository_owner == 'pytorch'
     name: get-label-type
-    uses: pytorch/pytorch/.github/workflows/_runner-determinator.yml@main
+    uses: riseproject-dev/pytorch/.github/workflows/_runner-determinator.yml@rise-riscv-runners
     with:
       triggering_actor: ${{ github.triggering_actor }}
       issue_owner: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
       curr_branch: ${{ github.head_ref || github.ref_name }}
       curr_ref_type: ${{ github.ref_type }}
   wheel-py3_10-cpu-build:
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
@@ -62,7 +63,7 @@ jobs:
       DOCKER_IMAGE: manylinux2_28-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu
       DESIRED_PYTHON: "3.10"
-      runs_on: ubuntu-24.04-riscv # Provide by RISE RISC-V Runners GH App
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
       build_name: wheel-py3_10-cpu
@@ -71,7 +72,7 @@ jobs:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
   wheel-py3_10-cpu-test:  # Testing
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
       - wheel-py3_10-cpu-build
       - get-label-type
@@ -117,7 +118,7 @@ jobs:
     uses: ./.github/workflows/_binary-upload.yml
 
   wheel-py3_11-cpu-build:
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
@@ -130,7 +131,7 @@ jobs:
       DOCKER_IMAGE: manylinux2_28-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu
       DESIRED_PYTHON: "3.11"
-      runs_on: ubuntu-24.04-riscv # Provide by RISE RISC-V Runners GH App
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
       build_name: wheel-py3_11-cpu
@@ -139,7 +140,7 @@ jobs:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
   wheel-py3_11-cpu-test:  # Testing
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
       - wheel-py3_11-cpu-build
       - get-label-type
@@ -185,7 +186,7 @@ jobs:
     uses: ./.github/workflows/_binary-upload.yml
 
   wheel-py3_12-cpu-build:
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
@@ -198,7 +199,7 @@ jobs:
       DOCKER_IMAGE: manylinux2_28-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu
       DESIRED_PYTHON: "3.12"
-      runs_on: ubuntu-24.04-riscv # Provide by RISE RISC-V Runners GH App
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
       build_name: wheel-py3_12-cpu
@@ -207,7 +208,7 @@ jobs:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
   wheel-py3_12-cpu-test:  # Testing
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
       - wheel-py3_12-cpu-build
       - get-label-type
@@ -253,7 +254,7 @@ jobs:
     uses: ./.github/workflows/_binary-upload.yml
 
   wheel-py3_13-cpu-build:
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
@@ -266,7 +267,7 @@ jobs:
       DOCKER_IMAGE: manylinux2_28-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu
       DESIRED_PYTHON: "3.13"
-      runs_on: ubuntu-24.04-riscv # Provide by RISE RISC-V Runners GH App
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
       build_name: wheel-py3_13-cpu
@@ -275,7 +276,7 @@ jobs:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
   wheel-py3_13-cpu-test:  # Testing
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
       - wheel-py3_13-cpu-build
       - get-label-type
@@ -321,7 +322,7 @@ jobs:
     uses: ./.github/workflows/_binary-upload.yml
 
   wheel-py3_13t-cpu-build:
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
@@ -334,7 +335,7 @@ jobs:
       DOCKER_IMAGE: manylinux2_28-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu
       DESIRED_PYTHON: "3.13t"
-      runs_on: ubuntu-24.04-riscv # Provide by RISE RISC-V Runners GH App
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
       build_name: wheel-py3_13t-cpu
@@ -343,7 +344,7 @@ jobs:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
   wheel-py3_13t-cpu-test:  # Testing
-    if: ${{ github.repository_owner == 'pytorch' }}
+    # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
       - wheel-py3_13t-cpu-build
       - get-label-type
