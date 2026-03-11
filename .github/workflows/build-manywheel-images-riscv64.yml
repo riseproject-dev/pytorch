@@ -12,7 +12,8 @@ on:
 env:
   DOCKER_REGISTRY: "docker.io"
   DOCKER_BUILDKIT: 1
-  WITH_PUSH: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/tags/v')) }}
+  WITH_PUSH: 1
+  # WITH_PUSH: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/tags/v')) }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}-${{ github.event_name == 'workflow_dispatch' }}
@@ -20,15 +21,18 @@ concurrency:
 
 jobs:
   build-docker-cpu-riscv64:
-    if: github.repository_owner == 'pytorch'
+    # if: github.repository_owner == 'pytorch'
     environment: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/tags/v')) && 'docker-build') || '' }}
-    runs-on: linux.riscv64
+    runs-on: ubuntu-24.04-riscv
     steps:
       - name: Checkout PyTorch
         uses: pytorch/pytorch/.github/actions/checkout-pytorch@main
         with:
           submodules: false
           no-sudo: true
+
+      - name: Login to Scaleway Container Registry
+        run: echo "${{ secrets.SCW_SECRET_KEY }}" | docker login rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s -u nologin --password-stdin
 
       - name: Build Docker Image
         run: |
@@ -47,7 +51,7 @@ jobs:
           GIT_COMMIT_SHA="${GITHUB_SHA:-$(git rev-parse HEAD)}"
           CI_FOLDER_SHA="$(git rev-parse HEAD:.ci/docker)"
 
-          DOCKER_IMAGE_NAME_PREFIX="docker.io/pytorch/${CREATED_FULL_DOCKER_IMAGE_NAME}"
+          DOCKER_IMAGE_NAME_PREFIX="rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/${CREATED_FULL_DOCKER_IMAGE_NAME}"
 
           docker tag "${CREATED_FULL_DOCKER_IMAGE_NAME}" "${DOCKER_IMAGE_NAME_PREFIX}-${GIT_BRANCH_NAME}"
           docker tag "${CREATED_FULL_DOCKER_IMAGE_NAME}" "${DOCKER_IMAGE_NAME_PREFIX}-${GIT_COMMIT_SHA}"
