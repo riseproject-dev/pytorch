@@ -49,6 +49,12 @@ case ${image} in
         DOCKER_GPU_BUILD_ARG=""
         MANY_LINUX_VERSION="s390x"
         ;;
+    manylinuxriscv64-builder:cpu-riscv64)
+        TARGET=final
+        GPU_IMAGE=riscv64/almalinux:8
+        DOCKER_GPU_BUILD_ARG=""
+        MANY_LINUX_VERSION="riscv64"
+        ;;
     manylinux2_28-builder:cuda11*)
         TARGET=cuda_final
         GPU_IMAGE=amd64/almalinux:8
@@ -110,7 +116,7 @@ if [[ -n ${MANY_LINUX_VERSION} && -z ${DOCKERFILE_SUFFIX} ]]; then
     DOCKERFILE_SUFFIX=_${MANY_LINUX_VERSION}
 fi
 # Only activate this if in CI
-if [ "$(uname -m)" != "s390x" ] && [ -v CI ]; then
+if [ "$(uname -m)" != "s390x" ] && [ "$(uname -m)" != "riscv64" ] && [ -v CI ]; then
     # TODO: Remove LimitNOFILE=1048576 patch once https://github.com/pytorch/test-infra/issues/5712
     # is resolved. This patch is required in order to fix timing out of Docker build on Amazon Linux 2023.
     sudo sed -i s/LimitNOFILE=infinity/LimitNOFILE=1048576/ /usr/lib/systemd/system/docker.service

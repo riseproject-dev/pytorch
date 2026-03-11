@@ -49,67 +49,67 @@ jobs:
       issue_owner: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
       curr_branch: ${{ github.head_ref || github.ref_name }}
       curr_ref_type: ${{ github.ref_type }}
-  wheel-py3_10-cpu-build:
+  manywheel-py3_10-cpu-riscv64-build:
     # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.10"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
-      build_name: wheel-py3_10-cpu
+      build_name: manywheel-py3_10-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  wheel-py3_10-cpu-test:  # Testing
+  manywheel-py3_10-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
-      - wheel-py3_10-cpu-build
+      - manywheel-py3_10-cpu-riscv64-build
       - get-label-type
     uses: ./.github/workflows/_binary-test-linux.yml
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.10"
-      build_name: wheel-py3_10-cpu
+      build_name: manywheel-py3_10-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
       runs_on: ubuntu-24.04-riscv
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-  wheel-py3_10-cpu-upload:  # Uploading
+  manywheel-py3_10-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
       id-token: write
       contents: read
-    needs: wheel-py3_10-cpu-test
+    needs: manywheel-py3_10-cpu-riscv64-test
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.10"
-      build_name: wheel-py3_10-cpu
+      build_name: manywheel-py3_10-cpu-riscv64
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -117,67 +117,67 @@ jobs:
       R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
     uses: ./.github/workflows/_binary-upload.yml
 
-  wheel-py3_11-cpu-build:
+  manywheel-py3_11-cpu-riscv64-build:
     # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.11"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
-      build_name: wheel-py3_11-cpu
+      build_name: manywheel-py3_11-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  wheel-py3_11-cpu-test:  # Testing
+  manywheel-py3_11-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
-      - wheel-py3_11-cpu-build
+      - manywheel-py3_11-cpu-riscv64-build
       - get-label-type
     uses: ./.github/workflows/_binary-test-linux.yml
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.11"
-      build_name: wheel-py3_11-cpu
+      build_name: manywheel-py3_11-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
       runs_on: ubuntu-24.04-riscv
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-  wheel-py3_11-cpu-upload:  # Uploading
+  manywheel-py3_11-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
       id-token: write
       contents: read
-    needs: wheel-py3_11-cpu-test
+    needs: manywheel-py3_11-cpu-riscv64-test
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.11"
-      build_name: wheel-py3_11-cpu
+      build_name: manywheel-py3_11-cpu-riscv64
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -185,67 +185,67 @@ jobs:
       R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
     uses: ./.github/workflows/_binary-upload.yml
 
-  wheel-py3_12-cpu-build:
+  manywheel-py3_12-cpu-riscv64-build:
     # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.12"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
-      build_name: wheel-py3_12-cpu
+      build_name: manywheel-py3_12-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  wheel-py3_12-cpu-test:  # Testing
+  manywheel-py3_12-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
-      - wheel-py3_12-cpu-build
+      - manywheel-py3_12-cpu-riscv64-build
       - get-label-type
     uses: ./.github/workflows/_binary-test-linux.yml
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.12"
-      build_name: wheel-py3_12-cpu
+      build_name: manywheel-py3_12-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
       runs_on: ubuntu-24.04-riscv
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-  wheel-py3_12-cpu-upload:  # Uploading
+  manywheel-py3_12-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
       id-token: write
       contents: read
-    needs: wheel-py3_12-cpu-test
+    needs: manywheel-py3_12-cpu-riscv64-test
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.12"
-      build_name: wheel-py3_12-cpu
+      build_name: manywheel-py3_12-cpu-riscv64
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -253,67 +253,67 @@ jobs:
       R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
     uses: ./.github/workflows/_binary-upload.yml
 
-  wheel-py3_13-cpu-build:
+  manywheel-py3_13-cpu-riscv64-build:
     # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
-      build_name: wheel-py3_13-cpu
+      build_name: manywheel-py3_13-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  wheel-py3_13-cpu-test:  # Testing
+  manywheel-py3_13-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
-      - wheel-py3_13-cpu-build
+      - manywheel-py3_13-cpu-riscv64-build
       - get-label-type
     uses: ./.github/workflows/_binary-test-linux.yml
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13"
-      build_name: wheel-py3_13-cpu
+      build_name: manywheel-py3_13-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
       runs_on: ubuntu-24.04-riscv
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-  wheel-py3_13-cpu-upload:  # Uploading
+  manywheel-py3_13-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
       id-token: write
       contents: read
-    needs: wheel-py3_13-cpu-test
+    needs: manywheel-py3_13-cpu-riscv64-test
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13"
-      build_name: wheel-py3_13-cpu
+      build_name: manywheel-py3_13-cpu-riscv64
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -321,67 +321,203 @@ jobs:
       R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
     uses: ./.github/workflows/_binary-upload.yml
 
-  wheel-py3_13t-cpu-build:
+  manywheel-py3_13t-cpu-riscv64-build:
     # if: ${{ github.repository_owner == 'pytorch' }}
     uses: ./.github/workflows/_binary-build-linux.yml
     needs: get-label-type
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13t"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
       timeout-minutes: 420
-      build_name: wheel-py3_13t-cpu
+      build_name: manywheel-py3_13t-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  wheel-py3_13t-cpu-test:  # Testing
+  manywheel-py3_13t-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
     needs:
-      - wheel-py3_13t-cpu-build
+      - manywheel-py3_13t-cpu-riscv64-build
       - get-label-type
     uses: ./.github/workflows/_binary-test-linux.yml
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13t"
-      build_name: wheel-py3_13t-cpu
+      build_name: manywheel-py3_13t-cpu-riscv64
       build_environment: linux-riscv64-binary-manywheel
       runs_on: ubuntu-24.04-riscv
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-  wheel-py3_13t-cpu-upload:  # Uploading
+  manywheel-py3_13t-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
       id-token: write
       contents: read
-    needs: wheel-py3_13t-cpu-test
+    needs: manywheel-py3_13t-cpu-riscv64-test
     with:
       PYTORCH_ROOT: /pytorch
-      PACKAGE_TYPE: wheel
+      PACKAGE_TYPE: manywheel
       # TODO: This is a legacy variable that we eventually want to get rid of in
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
-      GPU_ARCH_TYPE: cpu
-      DOCKER_IMAGE: manylinux2_28-builder
-      DOCKER_IMAGE_TAG_PREFIX: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13t"
-      build_name: wheel-py3_13t-cpu
+      build_name: manywheel-py3_13t-cpu-riscv64
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    uses: ./.github/workflows/_binary-upload.yml
+
+  manywheel-py3_14-cpu-riscv64-build:
+    # if: ${{ github.repository_owner == 'pytorch' }}
+    uses: ./.github/workflows/_binary-build-linux.yml
+    needs: get-label-type
+    with:
+      PYTORCH_ROOT: /pytorch
+      PACKAGE_TYPE: manywheel
+      # TODO: This is a legacy variable that we eventually want to get rid of in
+      #       favor of GPU_ARCH_VERSION
+      DESIRED_CUDA: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
+      DESIRED_PYTHON: "3.14"
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
+      ALPINE_IMAGE: "docker.io/riscv64/alpine"
+      timeout-minutes: 420
+      build_name: manywheel-py3_14-cpu-riscv64
+      build_environment: linux-riscv64-binary-manywheel
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  manywheel-py3_14-cpu-riscv64-test:  # Testing
+    # if: ${{ github.repository_owner == 'pytorch' }}
+    needs:
+      - manywheel-py3_14-cpu-riscv64-build
+      - get-label-type
+    uses: ./.github/workflows/_binary-test-linux.yml
+    with:
+      PYTORCH_ROOT: /pytorch
+      PACKAGE_TYPE: manywheel
+      # TODO: This is a legacy variable that we eventually want to get rid of in
+      #       favor of GPU_ARCH_VERSION
+      DESIRED_CUDA: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
+      DESIRED_PYTHON: "3.14"
+      build_name: manywheel-py3_14-cpu-riscv64
+      build_environment: linux-riscv64-binary-manywheel
+      runs_on: ubuntu-24.04-riscv
+      ALPINE_IMAGE: "docker.io/riscv64/alpine"
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+  manywheel-py3_14-cpu-riscv64-upload:  # Uploading
+    if: ${{ github.repository_owner == 'pytorch' }}
+    permissions:
+      id-token: write
+      contents: read
+    needs: manywheel-py3_14-cpu-riscv64-test
+    with:
+      PYTORCH_ROOT: /pytorch
+      PACKAGE_TYPE: manywheel
+      # TODO: This is a legacy variable that we eventually want to get rid of in
+      #       favor of GPU_ARCH_VERSION
+      DESIRED_CUDA: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
+      DESIRED_PYTHON: "3.14"
+      build_name: manywheel-py3_14-cpu-riscv64
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    uses: ./.github/workflows/_binary-upload.yml
+
+  manywheel-py3_14t-cpu-riscv64-build:
+    # if: ${{ github.repository_owner == 'pytorch' }}
+    uses: ./.github/workflows/_binary-build-linux.yml
+    needs: get-label-type
+    with:
+      PYTORCH_ROOT: /pytorch
+      PACKAGE_TYPE: manywheel
+      # TODO: This is a legacy variable that we eventually want to get rid of in
+      #       favor of GPU_ARCH_VERSION
+      DESIRED_CUDA: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
+      DESIRED_PYTHON: "3.14t"
+      runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
+      ALPINE_IMAGE: "docker.io/riscv64/alpine"
+      timeout-minutes: 420
+      build_name: manywheel-py3_14t-cpu-riscv64
+      build_environment: linux-riscv64-binary-manywheel
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  manywheel-py3_14t-cpu-riscv64-test:  # Testing
+    # if: ${{ github.repository_owner == 'pytorch' }}
+    needs:
+      - manywheel-py3_14t-cpu-riscv64-build
+      - get-label-type
+    uses: ./.github/workflows/_binary-test-linux.yml
+    with:
+      PYTORCH_ROOT: /pytorch
+      PACKAGE_TYPE: manywheel
+      # TODO: This is a legacy variable that we eventually want to get rid of in
+      #       favor of GPU_ARCH_VERSION
+      DESIRED_CUDA: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
+      DESIRED_PYTHON: "3.14t"
+      build_name: manywheel-py3_14t-cpu-riscv64
+      build_environment: linux-riscv64-binary-manywheel
+      runs_on: ubuntu-24.04-riscv
+      ALPINE_IMAGE: "docker.io/riscv64/alpine"
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+  manywheel-py3_14t-cpu-riscv64-upload:  # Uploading
+    if: ${{ github.repository_owner == 'pytorch' }}
+    permissions:
+      id-token: write
+      contents: read
+    needs: manywheel-py3_14t-cpu-riscv64-test
+    with:
+      PYTORCH_ROOT: /pytorch
+      PACKAGE_TYPE: manywheel
+      # TODO: This is a legacy variable that we eventually want to get rid of in
+      #       favor of GPU_ARCH_VERSION
+      DESIRED_CUDA: cpu
+      GPU_ARCH_TYPE: cpu-riscv64
+      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
+      DESIRED_PYTHON: "3.14t"
+      build_name: manywheel-py3_14t-cpu-riscv64
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
