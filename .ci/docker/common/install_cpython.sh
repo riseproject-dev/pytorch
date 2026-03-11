@@ -52,7 +52,7 @@ function do_cpython_build {
     # -Wformat added for https://bugs.python.org/issue17547 on Python 2.6
     CFLAGS="-Wformat" ./configure --prefix=${prefix} ${openssl_flags} ${shared_flags} ${additional_flags} > /dev/null
 
-    make -j40 > /dev/null
+    make -j$(test $(uname -m) == "riscv64" && echo $(nproc) || echo "40") > /dev/null
     make install > /dev/null
 
     if [[ "${shared_flags}" == "--enable-shared" ]]; then

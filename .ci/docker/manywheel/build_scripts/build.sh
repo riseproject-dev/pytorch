@@ -13,15 +13,18 @@ DEVTOOLS_HASH=a8ebeb4bed624700f727179e6ef771dafe47651131a00a78b342251415646acc
 PATCHELF_HASH=d9afdff4baeacfbc64861454f368b7f2c15c44d245293f7587bbf726bfe722fb
 CURL_ROOT=curl-7.73.0
 CURL_HASH=cf34fe0b07b800f1c01a499a6e8b2af548f6d0e044dca4a29d88a4bee146d131
-AUTOCONF_ROOT=autoconf-2.69
-AUTOCONF_HASH=954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b59dc0dd6fd4c2969
+AUTOCONF_ROOT=autoconf-2.72
+AUTOCONF_HASH=afb181a76e1ee72832f6581c0eddf8df032b83e2e0239ef79ebedc4467d92d6e
 
 # Dependencies for compiling Python that we want to remove from
 # the final image after compiling Python
 PYTHON_COMPILE_DEPS="zlib-devel bzip2-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel libpcap-devel xz-devel libffi-devel"
 
-if [ "$(uname -m)" != "s390x" ] ; then
+if [ "$(uname -m)" == "s390x" ] ; then
     PYTHON_COMPILE_DEPS="${PYTHON_COMPILE_DEPS} db4-devel"
+elif [ "$(uname -m)" == "riscv64" ] ; then
+    # db4-devel nor libdb-devel available on riscv64
+    true
 else
     PYTHON_COMPILE_DEPS="${PYTHON_COMPILE_DEPS} libdb-devel"
 fi
@@ -34,7 +37,7 @@ MY_DIR=$(dirname "${BASH_SOURCE[0]}")
 source $MY_DIR/build_utils.sh
 
 # Development tools and libraries
-yum -y install bzip2 make git patch unzip bison yasm diffutils \
+yum -y install bzip2 make git patch unzip bison $(test $(uname -m) != "riscv64" && echo "yasm") diffutils \
     automake which file \
     ${PYTHON_COMPILE_DEPS}
 
@@ -73,7 +76,7 @@ curl-config --features
 curl -sLOk https://nixos.org/releases/patchelf/patchelf-0.10/patchelf-0.10.tar.gz
 # check_sha256sum patchelf-0.9njs2.tar.gz $PATCHELF_HASH
 tar -xzf patchelf-0.10.tar.gz
-(cd patchelf-0.10 && ./configure && make && make install)
+(cd patchelf-0.10 && ./configure && make -j$(nproc) && make install)
 rm -rf patchelf-0.10.tar.gz patchelf-0.10
 
 # Install latest pypi release of auditwheel

@@ -18,7 +18,7 @@ function check_var {
 
 function do_openssl_build {
     ./config no-ssl2 no-shared -fPIC --prefix=/usr/local/ssl > /dev/null
-    make > /dev/null
+    make -j$(nproc) > /dev/null
     make install > /dev/null
 }
 
@@ -51,7 +51,7 @@ function build_openssl {
 
 function do_curl_build {
     LIBS=-ldl ./configure --with-ssl --disable-shared > /dev/null
-    make > /dev/null
+    make -j$(nproc) > /dev/null
     make install > /dev/null
 }
 
@@ -72,7 +72,7 @@ function build_curl {
 
 function do_standard_install {
     ./configure > /dev/null
-    make > /dev/null
+    make -j$(nproc) > /dev/null
     make install > /dev/null
 }
 

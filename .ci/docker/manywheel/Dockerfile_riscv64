@@ -7,10 +7,9 @@ ENV LANGUAGE=C.UTF-8
 
 # it's better to use the latest devtoolset for riscv64, as it contains more
 # bugfixes and improvements for this architecture.
-ARG DEVTOOLSET_VERSION=14
+ARG DEVTOOLSET_VERSION=15
 # Installed needed OS packages. This is to support all
 # the binary builds (torch, vision, audio, text, data)
-RUN yum -y install epel-release
 RUN yum -y update
 RUN yum install -y \
   sudo \
@@ -30,7 +29,6 @@ RUN yum install -y \
   wget \
   which \
   xz \
-  yasm \
   less \
   zstd \
   libgomp \
@@ -47,7 +45,6 @@ RUN yum install -y \
   python3.12-test \
   python3.12-setuptools \
   python3.12-pip \
-  python3-virtualenv \
   python3.12-pyyaml \
   python3.12-numpy \
   python3.12-wheel \
@@ -55,7 +52,6 @@ RUN yum install -y \
   blas-devel \
   openblas-devel \
   lapack-devel \
-  atlas-devel \
   libjpeg-devel \
   libxslt-devel \
   libxml2-devel \
