@@ -60,7 +60,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.10"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
@@ -84,7 +84,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.10"
       build_name: manywheel-py3_10-cpu-riscv64
@@ -106,7 +106,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.10"
       build_name: manywheel-py3_10-cpu-riscv64
@@ -128,7 +128,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.11"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
@@ -152,7 +152,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.11"
       build_name: manywheel-py3_11-cpu-riscv64
@@ -174,7 +174,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.11"
       build_name: manywheel-py3_11-cpu-riscv64
@@ -196,7 +196,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.12"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
@@ -220,7 +220,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.12"
       build_name: manywheel-py3_12-cpu-riscv64
@@ -242,7 +242,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.12"
       build_name: manywheel-py3_12-cpu-riscv64
@@ -264,7 +264,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
@@ -288,7 +288,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13"
       build_name: manywheel-py3_13-cpu-riscv64
@@ -310,7 +310,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13"
       build_name: manywheel-py3_13-cpu-riscv64
@@ -332,7 +332,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13t"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
@@ -356,7 +356,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13t"
       build_name: manywheel-py3_13t-cpu-riscv64
@@ -378,7 +378,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.13t"
       build_name: manywheel-py3_13t-cpu-riscv64
@@ -400,7 +400,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.14"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
@@ -424,7 +424,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.14"
       build_name: manywheel-py3_14-cpu-riscv64
@@ -446,7 +446,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.14"
       build_name: manywheel-py3_14-cpu-riscv64
@@ -468,7 +468,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.14t"
       runs_on: ubuntu-24.04-riscv # Provided by RISE RISC-V Runners GH App
@@ -492,7 +492,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.14t"
       build_name: manywheel-py3_14t-cpu-riscv64
@@ -514,7 +514,7 @@ jobs:
       #       favor of GPU_ARCH_VERSION
       DESIRED_CUDA: cpu
       GPU_ARCH_TYPE: cpu-riscv64
-      DOCKER_IMAGE: pytorch/manylinuxriscv64-builder
+      DOCKER_IMAGE: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder
       DOCKER_IMAGE_TAG_PREFIX: cpu-riscv64
       DESIRED_PYTHON: "3.14t"
       build_name: manywheel-py3_14t-cpu-riscv64

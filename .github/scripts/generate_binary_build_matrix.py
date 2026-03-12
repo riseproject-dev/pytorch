@@ -270,7 +270,7 @@ WHEEL_CONTAINER_IMAGES = {
     "cpu": "manylinux2_28-builder:cpu",
     "cpu-aarch64": "manylinux2_28_aarch64-builder:cpu-aarch64",
     "cpu-s390x": "pytorch/manylinuxs390x-builder:cpu-s390x",
-    "cpu-riscv64": "pytorch/manylinuxriscv64-builder:cpu-riscv64",
+    "cpu-riscv64": "rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder:cpu-riscv64",
 }
 
 RELEASE = "release"
