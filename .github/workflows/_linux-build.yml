@@ -355,6 +355,7 @@ jobs:
                 (sleep 60 && python3 -m pip install -r requirements.txt) || \
                 (sleep 300 && python3 -m pip install -r requirements.txt)"
           elif [[ ${BUILD_ENVIRONMENT} == *"riscv64"* ]]; then
+            docker exec -t "${container_name}" sh -c "python3 -m pip install 'setuptools>=70.1.0,<82' --ignore-installed"
             # sometimes there are intermittent network errors, do a couple of retries
             docker exec -t "${container_name}" sh -c "python3 -m pip install -r requirements.txt || \
                 (sleep 15 && python3 -m pip install -r requirements.txt) || \
