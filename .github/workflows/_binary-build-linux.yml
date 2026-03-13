@@ -150,9 +150,6 @@ jobs:
         with:
           github-secret: ${{ secrets.github-token }}
 
-      - name: Login to Scaleway Container Registry
-        run: echo "${{ secrets.scw-secret-key }}" | docker login rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s -u nologin --password-stdin
-
       - name: Checkout PyTorch
         uses: pytorch/pytorch/.github/actions/checkout-pytorch@main
         with:
