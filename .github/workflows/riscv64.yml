@@ -2,6 +2,8 @@ name: riscv64
 
 on:
   push:
+    branches:
+      - rise-riscv-runners
     tags:
       - ciflow/riscv64/*
   workflow_dispatch:
@@ -13,12 +15,12 @@ concurrency:
 permissions: read-all
 
 jobs:
-  pytorch-linux-noble-riscv64-py3_12-gcc14-cross-build:
-    if: github.repository_owner == 'pytorch'
-    name: pytorch-linux-noble-riscv64-py3_12-gcc14-cross-build
+  linux-manylinux-2_39-py3-cpu-riscv64-build:
+    # if: github.repository_owner == 'pytorch'
+    name: linux-manylinux-2_39-py3-cpu-riscv64
     uses: ./.github/workflows/_linux-build.yml
     with:
-      build-environment: linux-noble-riscv64-py3.12-gcc14
-      docker-image-name: pytorch-linux-noble-riscv64-py3.12-gcc14
-      runner: linux.c7i.2xlarge
+      build-environment: linux-riscv64-binary-manywheel
+      docker-image-name: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder:cpu-riscv64
+      runner: ubuntu-24.04-riscv
     secrets: inherit
