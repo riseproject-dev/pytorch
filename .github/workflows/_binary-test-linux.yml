@@ -68,6 +68,9 @@ on:
       github-token:
         required: true
         description: Github Token
+      scw-secret-key:
+        required: true
+        description: Scaleway Secret Key
 
 permissions:
   id-token: write
@@ -129,6 +132,9 @@ jobs:
         continue-on-error: true
         with:
           github-secret: ${{ secrets.github-token }}
+
+      - name: Login to Scaleway Container Registry
+        run: echo "${{ secrets.scw-secret-key }}" | docker login rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s -u nologin --password-stdin
 
         # Setup the environment
       - name: Checkout PyTorch

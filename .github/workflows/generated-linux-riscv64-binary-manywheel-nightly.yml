@@ -70,6 +70,7 @@ jobs:
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
   manywheel-py3_10-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
@@ -93,6 +94,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
   manywheel-py3_10-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
@@ -138,6 +140,7 @@ jobs:
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
   manywheel-py3_11-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
@@ -161,6 +164,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
   manywheel-py3_11-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
@@ -206,6 +210,7 @@ jobs:
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
   manywheel-py3_12-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
@@ -229,6 +234,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
   manywheel-py3_12-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
@@ -274,6 +280,7 @@ jobs:
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
   manywheel-py3_13-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
@@ -297,6 +304,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
   manywheel-py3_13-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
@@ -342,6 +350,7 @@ jobs:
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
   manywheel-py3_13t-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
@@ -365,6 +374,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
   manywheel-py3_13t-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
@@ -410,6 +420,7 @@ jobs:
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
   manywheel-py3_14-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
@@ -433,6 +444,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
   manywheel-py3_14-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
@@ -478,6 +490,7 @@ jobs:
       build_environment: linux-riscv64-binary-manywheel
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
   manywheel-py3_14t-cpu-riscv64-test:  # Testing
     # if: ${{ github.repository_owner == 'pytorch' }}
@@ -501,6 +514,7 @@ jobs:
       ALPINE_IMAGE: "docker.io/riscv64/alpine"
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
+      scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
   manywheel-py3_14t-cpu-riscv64-upload:  # Uploading
     if: ${{ github.repository_owner == 'pytorch' }}
     permissions:
