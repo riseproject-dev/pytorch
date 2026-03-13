@@ -58,8 +58,8 @@ RUN yum install -y \
   valgrind \
   ninja-build
 
-RUN python3.12 -m pip install --upgrade pip && \
-    python3.12 -m pip install 'setuptools>=70.1.0,<82'
+RUN python3.12 -m pip install --upgrade pip \
+ && python3.12 -m pip install 'setuptools>=70.1.0,<82'
 
 ENV PATH=/opt/rh/gcc-toolset-${DEVTOOLSET_VERSION}/root/usr/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/rh/gcc-toolset-${DEVTOOLSET_VERSION}/root/usr/lib64:/opt/rh/gcc-toolset-${DEVTOOLSET_VERSION}/root/usr/lib:$LD_LIBRARY_PATH
