@@ -81,6 +81,12 @@ if [[ "$BUILD_ENVIRONMENT" == *aarch64* ]]; then
   export ACL_ROOT_DIR=/acl
 fi
 
+if [[ "$BUILD_ENVIRONMENT" == *riscv64* ]]; then
+  if [ -z "$MAX_JOBS" ]; then
+    export MAX_JOBS=$(nproc)
+  fi
+fi
+
 # Use special scripts for Android builds
 
 if [[ "$BUILD_ENVIRONMENT" == *vulkan* ]]; then
@@ -233,7 +239,7 @@ else
     # XLA test build fails when WERROR=1
     # set only when building other architectures
     # or building non-XLA tests.
-    if [[ "$BUILD_ENVIRONMENT" != *rocm*  && "$BUILD_ENVIRONMENT" != *xla* && "$BUILD_ENVIRONMENT" != *riscv64* ]]; then
+    if [[ "$BUILD_ENVIRONMENT" != *rocm*  && "$BUILD_ENVIRONMENT" != *xla* ]]; then
       # TODO: Remove me and may be just focus on numpy-2.x testing
       if [[ "$ANACONDA_PYTHON_VERSION" =~ ^3\.1[0-2]$ ]]; then
         # Install numpy-2.0.2 for builds which are backward compatible with 1.X
