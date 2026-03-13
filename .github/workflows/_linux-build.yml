@@ -274,6 +274,7 @@ jobs:
           SCRIBE_GRAPHQL_ACCESS_TOKEN: ${{ secrets.SCRIBE_GRAPHQL_ACCESS_TOKEN }}
           BUILD_ADDITIONAL_PACKAGES: ${{ inputs.build-additional-packages }}
           RUNNER: ${{ inputs.runner }}
+          PIP_PROGRESS_BAR: "off"
         run: |
           START_TIME=$(date +%s)
           if [[ ${BUILD_ENVIRONMENT} == *"s390x"* ]]; then
@@ -331,6 +332,7 @@ jobs:
             -e SCRIBE_GRAPHQL_ACCESS_TOKEN \
             -e BUILD_ADDITIONAL_PACKAGES \
             -e RUNNER \
+            -e PIP_PROGRESS_BAR \
             --memory="${TOTAL_AVAILABLE_MEMORY_IN_GB%.*}g" \
             --memory-swap="${TOTAL_MEMORY_WITH_SWAP}g" \
             --env-file="/tmp/github_env_${GITHUB_RUN_ID}" \
