@@ -103,6 +103,12 @@ on:
         required: false
         type: string
         default: ""
+      max-jobs:
+        description: |
+          Maximum number of compile jobs we should use to compile the code
+        required: false
+        type: number
+        default: -1
 
     secrets:
       HUGGING_FACE_HUB_TOKEN:
@@ -275,6 +281,7 @@ jobs:
           BUILD_ADDITIONAL_PACKAGES: ${{ inputs.build-additional-packages }}
           RUNNER: ${{ inputs.runner }}
           PIP_PROGRESS_BAR: "off"
+          MAX_JOBS: ${{ inputs.max-jobs }}
         run: |
           START_TIME=$(date +%s)
           if [[ ${BUILD_ENVIRONMENT} == *"s390x"* ]]; then
@@ -311,12 +318,16 @@ jobs:
           # comes from https://github.com/pytorch/test-infra/pull/6058
           TOTAL_MEMORY_WITH_SWAP=$(("${TOTAL_AVAILABLE_MEMORY_IN_GB%.*}" + 3))
 
+          if [[ ${MAX_JOBS} == "-1" ]]; then
+            MAX_JOBS=$(nproc --ignore=2)
+          fi
+
           # detached container should get cleaned up by teardown_ec2_linux
           # Used for JENKINS_USER and DOCKER_SHELL_CMD, which can be empty
           # shellcheck disable=SC2086
           container_name=$(docker run \
             -e BUILD_ENVIRONMENT \
-            -e MAX_JOBS="$(nproc --ignore=2)" \
+            -e MAX_JOBS="${MAX_JOBS}" \
             -e PR_NUMBER \
             -e SHA1 \
             -e BRANCH \

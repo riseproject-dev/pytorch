@@ -23,4 +23,5 @@ jobs:
       build-environment: linux-riscv64-binary-manywheel
       docker-image-name: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s/pytorch/manylinuxriscv64-builder:cpu-riscv64
       runner: ubuntu-24.04-riscv
+      max-jobs: 4
     secrets: inherit
