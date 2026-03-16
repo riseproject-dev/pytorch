@@ -3,6 +3,8 @@ name: Build manywheel docker images for riscv64
 on:
   workflow_dispatch:
   push:
+    branches:
+      - rise-riscv-runners
     tags:
       - ciflow/riscv64/*
     paths:
