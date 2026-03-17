@@ -7,8 +7,8 @@ on:
       - rise-riscv-runners
     tags:
       - ciflow/riscv64/*
-    paths:
-      - .github/workflows/build-manywheel-images-riscv64.yml
+    # paths:
+    #   - .github/workflows/build-manywheel-images-riscv64.yml
 
 
 env:
