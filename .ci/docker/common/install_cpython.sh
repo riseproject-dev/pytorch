@@ -51,7 +51,7 @@ function do_cpython_build {
         # The default on some machines is to have sysctl vm.mmap_min_addr=65536, which breaks on a
         # non-PIE Python runtime which is going to try to map segment from shared object at address
         # at 0x1000.
-        local linkforshared="-pie"
+        local linkforshared="-pie -Wl,-Ttext-segment=0x400000"
     else
         local linkforshared=""
     fi
