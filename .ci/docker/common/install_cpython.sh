@@ -47,10 +47,18 @@ function do_cpython_build {
         local openssl_flags="--with-openssl=${WITH_OPENSSL} --with-openssl-rpath=auto"
     fi
 
+    if [[ $(uname -m) == "riscv64" && "${shared_flags}" == "--enable-shared" ]]; then
+        # The default on some machines is to have sysctl vm.mmap_min_addr=65536, which breaks on a
+        # non-PIE Python runtime which is going to try to map segment from shared object at address
+        # at 0x1000.
+        local linkforshared="-pie"
+    else
+        local linkforshared=""
+    fi
 
 
     # -Wformat added for https://bugs.python.org/issue17547 on Python 2.6
-    CFLAGS="-Wformat" ./configure --prefix=${prefix} ${openssl_flags} ${shared_flags} ${additional_flags} > /dev/null
+    CFLAGS="-Wformat" LINKFORSHARED="${linkforshared}" ./configure --prefix=${prefix} ${openssl_flags} ${shared_flags} ${additional_flags} > /dev/null
 
     make -j$(test $(uname -m) == "riscv64" && echo $(nproc) || echo "40") > /dev/null
     make install > /dev/null
