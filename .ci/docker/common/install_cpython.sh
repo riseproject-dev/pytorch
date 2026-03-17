@@ -46,6 +46,11 @@ function do_cpython_build {
     else
         local openssl_flags="--with-openssl=${WITH_OPENSSL} --with-openssl-rpath=auto"
     fi
+    if [[ "${py_ver}" != "3.9.0" ]]; then
+        local test_module_flags="--disable-test-modules"
+    else
+        local test_module_flags=""
+    fi
 
     if [[ $(uname -m) == "riscv64" && "${shared_flags}" == "--enable-shared" ]]; then
         # The default on some machines is to have sysctl vm.mmap_min_addr=65536, which breaks on a
@@ -58,7 +63,7 @@ function do_cpython_build {
 
 
     # -Wformat added for https://bugs.python.org/issue17547 on Python 2.6
-    CFLAGS="-Wformat" LINKFORSHARED="${linkforshared}" ./configure --prefix=${prefix} ${openssl_flags} ${shared_flags} ${additional_flags} > /dev/null
+    CFLAGS="-Wformat" LINKFORSHARED="${linkforshared}" ./configure --prefix=${prefix} ${openssl_flags} ${shared_flags} ${test_module_flags} ${additional_flags} > /dev/null
 
     make -j$(test $(uname -m) == "riscv64" && echo $(nproc) || echo "40") > /dev/null
     make install > /dev/null
