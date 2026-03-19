@@ -9,6 +9,10 @@ inputs:
   docker-build-dir:
     description: Location of the build.sh relative to .ci/docker
     required: true
+  docker-registry:
+    description: The registry to store the image after it is built.
+    required: true
+    default: "docker.io"
   custom-tag-prefix:
     description: Custom tag prefix for the docker image
     required: false
@@ -17,6 +21,9 @@ inputs:
     required: true
   DOCKER_ID:
     description: Docker ID for authentication
+    required: true
+  scw-secret-key:
+    description: Scaleway Secret Key
     required: true
 
 runs:
@@ -27,16 +34,18 @@ runs:
 
     - name: Calculate docker image
       id: calculate-docker-image
-      uses: pytorch/test-infra/.github/actions/calculate-docker-image@main
+      uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@manywheel-riscv64
       with:
         docker-image-name: ${{ inputs.docker-image-name }}
         docker-build-dir: .ci/docker
         custom-tag-prefix: ${{ inputs.custom-tag-prefix }}
         docker-build-script: ${{ inputs.docker-build-dir }}/build.sh
+        docker-registry: ${{ inputs.docker-registry }}
         always-rebuild: true
         push: true
+        scw-secret-key: ${{ inputs.scw-secret-key }}
 
-    - name: Tag and (if WITH_PUSH) push docker image to docker.io
+    - name: Tag and (if WITH_PUSH) push docker image to ${{ inputs.docker-registry }}
       env:
         DOCKER_TOKEN: ${{ inputs.DOCKER_TOKEN }}
         DOCKER_ID: ${{ inputs.DOCKER_ID }}
