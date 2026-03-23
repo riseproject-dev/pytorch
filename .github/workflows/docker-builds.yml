@@ -9,13 +9,15 @@ on:
       - .lintrunner.toml
   push:
     branches:
-      - main
-      - release/*
-      - landchecks/*
-    paths:
-      - .ci/docker/**
-      - .github/workflows/docker-builds.yml
-      - .lintrunner.toml
+      - manywheel-riscv64-1
+    # branches:
+    #   - main
+    #   - release/*
+    #   - landchecks/*
+    # paths:
+    #   - .ci/docker/**
+    #   - .github/workflows/docker-builds.yml
+    #   - .lintrunner.toml
   schedule:
     - cron: 1 3 * * 3
 
@@ -31,9 +33,9 @@ permissions: read-all
 
 jobs:
   get-label-type:
-    if: github.repository_owner == 'pytorch'
+    # if: github.repository_owner == 'pytorch'
     name: get-label-type
-    uses: pytorch/pytorch/.github/workflows/_runner-determinator.yml@main
+    uses: riseproject-dev/pytorch/.github/workflows/_runner-determinator.yml@manywheel-riscv64-1
     with:
       triggering_actor: ${{ github.triggering_actor }}
       issue_owner: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
@@ -89,6 +91,8 @@ jobs:
           - docker-image-name: pytorch-linux-jammy-aarch64-py3.10-gcc13-inductor-benchmarks
             runner: linux.arm64.m7g.4xlarge
             timeout-minutes: 600
+          - docker-image-name: pytorch-linux-noble-riscv64-py3.12-gcc14
+            runner: linux.riscv64.2xlarge.ephemeral
     # Docker uploads fail from LF runners, see https://github.com/pytorch/pytorch/pull/137358
     # runs-on: "${{ needs.get-label-type.outputs.label-type }}${{ matrix.runner }}"
     runs-on: "${{ matrix.runner }}"
@@ -108,21 +112,24 @@ jobs:
       - name: Setup Linux
         uses: ./.github/actions/setup-linux
 
-      - name: Login to ECR
-        uses: ./.github/actions/ecr-login
+      # - name: Login to ECR
+      #   uses: ./.github/actions/ecr-login
 
       - name: Build docker image
         id: build-docker-image
-        uses: pytorch/test-infra/.github/actions/calculate-docker-image@main
+        uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@manywheel-riscv64
         with:
           docker-image-name: ci-image:${{ matrix.docker-image-name }}
+          docker-registry: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s
+          scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
           always-rebuild: true
           push: true
 
       - name: Pull docker image
-        uses: pytorch/test-infra/.github/actions/pull-docker-image@main
+        uses: riseproject-dev/test-infra/.github/actions/pull-docker-image@manywheel-riscv64
         with:
           docker-image: ${{ steps.build-docker-image.outputs.docker-image }}
+          docker-registry: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s
 
       - name: Generate output
         if: contains(matrix.docker-image-name, 'rocm')
