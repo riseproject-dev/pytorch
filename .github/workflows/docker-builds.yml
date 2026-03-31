@@ -120,8 +120,7 @@ jobs:
         uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@manywheel-riscv64
         with:
           docker-image-name: ci-image:${{ matrix.docker-image-name }}
-          docker-registry: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s
-          scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
+          docker-registry: ghcr.io/${{ github.repository_owner }}
           always-rebuild: true
           push: true
 
@@ -129,7 +128,7 @@ jobs:
         uses: riseproject-dev/test-infra/.github/actions/pull-docker-image@manywheel-riscv64
         with:
           docker-image: ${{ steps.build-docker-image.outputs.docker-image }}
-          docker-registry: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s
+          docker-registry: ghcr.io/${{ github.repository_owner }}
 
       - name: Generate output
         if: contains(matrix.docker-image-name, 'rocm')
@@ -160,18 +159,18 @@ jobs:
           max_attempts: 5
           retry_wait_seconds: 90
           command: |
-            ghcr_image="ghcr.io/pytorch/ci-image"
+            ghcr_image="ghcr.io/${{ github.repository_owner }}/ci-image"
             tag=${ECR_DOCKER_IMAGE##*:}
             # Push docker image to the ghcr.io
             echo $GHCR_PAT | docker login ghcr.io -u pytorch --password-stdin
             docker tag "${ECR_DOCKER_IMAGE}" "${ghcr_image}:${tag}"
             docker push "${ghcr_image}:${tag}"
 
-      - name: Chown workspace
-        uses: ./.github/actions/chown-workspace
-        with:
-          ALPINE_IMAGE: 308535385114.dkr.ecr.us-east-1.amazonaws.com/${{ contains(matrix.runner, 'arm64') && 'arm64v8' || 'tool' }}/alpine
-        if: always()
+      # - name: Chown workspace
+      #   uses: ./.github/actions/chown-workspace
+      #   with:
+      #     ALPINE_IMAGE: 308535385114.dkr.ecr.us-east-1.amazonaws.com/${{ contains(matrix.runner, 'arm64') && 'arm64v8' || 'tool' }}/alpine
+      #   if: always()
 
       - name: Teardown Linux
         uses: pytorch/test-infra/.github/actions/teardown-linux@main
