@@ -193,9 +193,9 @@ jobs:
         uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@manywheel-riscv64
         if: inputs.build-environment != 'linux-s390x-binary-manywheel'
         with:
-          docker-registry: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s
+          docker-registry: ghcr.io/${{ github.repository_owner }}
           docker-image-name: ${{ inputs.docker-image-name }}
-          scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
+          ghcr-pat: ${{ secrets.GHCR_PAT }}
 
       - name: Use following to pull public copy of the image
         id: print-ghcr-mirror

@@ -119,8 +119,9 @@ jobs:
         id: build-docker-image
         uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@manywheel-riscv64
         with:
-          docker-image-name: ci-image:${{ matrix.docker-image-name }}
           docker-registry: ghcr.io/${{ github.repository_owner }}
+          docker-image-name: ci-image:${{ matrix.docker-image-name }}
+          ghcr-pat: ${{ secrets.GHCR_PAT }}
           always-rebuild: true
           push: true
 
@@ -129,6 +130,7 @@ jobs:
         with:
           docker-image: ${{ steps.build-docker-image.outputs.docker-image }}
           docker-registry: ghcr.io/${{ github.repository_owner }}
+          ghcr-pat: ${{ secrets.GHCR_PAT }}
 
       - name: Generate output
         if: contains(matrix.docker-image-name, 'rocm')
@@ -159,7 +161,7 @@ jobs:
           max_attempts: 5
           retry_wait_seconds: 90
           command: |
-            ghcr_image="ghcr.io/${{ github.repository_owner }}/ci-image"
+            ghcr_image="ghcr.io/${{ github.repository }}/ci-image"
             tag=${ECR_DOCKER_IMAGE##*:}
             # Push docker image to the ghcr.io
             echo $GHCR_PAT | docker login ghcr.io -u pytorch --password-stdin

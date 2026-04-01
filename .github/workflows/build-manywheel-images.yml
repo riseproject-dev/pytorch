@@ -74,7 +74,7 @@ jobs:
           docker-image-name: ${{ matrix.name }}
           custom-tag-prefix: ${{ matrix.tag }}
           docker-build-dir: manywheel
-          docker-registry: rg.fr-par.scw.cloud/funcscwriseriscvrunnerappqdvknz9s
+          docker-registry: ghcr.io/${{ github.repository_owner }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_ID: ${{ secrets.DOCKER_ID }}
-          scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
+          ghcr-pat: ${{ secrets.GHCR_PAT }}
