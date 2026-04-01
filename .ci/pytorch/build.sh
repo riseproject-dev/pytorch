@@ -82,24 +82,8 @@ if [[ "$BUILD_ENVIRONMENT" == *aarch64* ]]; then
 fi
 
 if [[ "$BUILD_ENVIRONMENT" == *riscv64* ]]; then
-  if [[ -f /opt/riscv-cross-env/bin/activate ]]; then
-    # shellcheck disable=SC1091
-    source /opt/riscv-cross-env/bin/activate
-  else
-    echo "Activation file not found"
-    exit 1
-  fi
-
-  export CMAKE_CROSSCOMPILING=TRUE
-  export CMAKE_SYSTEM_NAME=Linux
-  export CMAKE_SYSTEM_PROCESSOR=riscv64
-
   export USE_CUDA=0
   export USE_MKLDNN=0
-
-  export SLEEF_TARGET_EXEC_USE_QEMU=ON
-  sudo chown -R jenkins /var/lib/jenkins/workspace /opt
-
 fi
 
 # Use special scripts for Android builds
