@@ -266,6 +266,7 @@ jobs:
           BUILD_ADDITIONAL_PACKAGES: ${{ inputs.build-additional-packages }}
           RUNNER: ${{ inputs.runner }}
         run: |
+          set -x
           START_TIME=$(date +%s)
           if [[ ${BUILD_ENVIRONMENT} == *"s390x"* ]]; then
             JENKINS_USER=
