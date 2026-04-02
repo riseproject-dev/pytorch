@@ -171,6 +171,15 @@ jobs:
           cuda-version: ${{ inputs.cuda-version }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Configure sccache
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        with:
+          script: |
+            core.exportVariable('SCCACHE_GHA_ENABLED', 'on');
+            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+            core.exportVariable('ACTIONS_CACHE_SERVICE_V2', 'on'); // Force the github action v2
+
       # - name: Login to ECR
       #   if: inputs.build-environment != 'linux-s390x-binary-manywheel'
       #   uses: ./.github/actions/ecr-login
@@ -311,6 +320,10 @@ jobs:
             -e HUGGING_FACE_HUB_TOKEN \
             -e BUILD_ADDITIONAL_PACKAGES \
             -e RUNNER \
+            -e SCCACHE_GHA_ENABLED \
+            -e ACTIONS_RESULTS_URL \
+            -e ACTIONS_RUNTIME_TOKEN \
+            -e ACTIONS_CACHE_SERVICE_V2 \
             --memory="${TOTAL_AVAILABLE_MEMORY_IN_GB%.*}g" \
             --memory-swap="${TOTAL_MEMORY_WITH_SWAP}g" \
             --env-file="/tmp/github_env_${GITHUB_RUN_ID}" \

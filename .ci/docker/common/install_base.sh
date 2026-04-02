@@ -156,4 +156,4 @@ else
 fi
 
 # Just add everything as a safe.directory for git since these will be used in multiple places with git
-git config --global --add safe.directory '*'
+git config --system --add safe.directory '*'

@@ -10,12 +10,19 @@ install_ubuntu() {
   echo "Checking out sccache repo"
   git clone https://github.com/mozilla/sccache -b v0.13.0
   cd sccache
-  echo "Patch dist build on aarch64"
-  sed -i '/all(target_os = "linux", target_arch = "x86_64"),/{ p; s/x86_64/aarch64/; }' src/bin/sccache-dist/main.rs
-  echo "Building sccache"
-  . "$HOME/.cargo/env" && cargo build --release --features="dist-client dist-server"
-  cp target/release/sccache /opt/cache/bin
-  cp target/release/sccache-dist /opt/cache/bin
+  if [[ $(uname -m) == "riscv64" ]]; then
+    # only compile sccache client with gha and s3 backends
+    echo "Building sccache"
+    . "$HOME/.cargo/env" && cargo build --release --features=gha,s3
+    cp target/release/sccache /opt/cache/bin
+  else
+    echo "Patch dist build on aarch64"
+    sed -i '/all(target_os = "linux", target_arch = "x86_64"),/{ p; s/x86_64/aarch64/; }' src/bin/sccache-dist/main.rs
+    echo "Building sccache"
+    . "$HOME/.cargo/env" && cargo build --release --features="dist-client dist-server"
+    cp target/release/sccache /opt/cache/bin
+    cp target/release/sccache-dist /opt/cache/bin
+  fi
   echo "Cleaning up"
   cd ..
   rm -rf sccache

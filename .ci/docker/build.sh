@@ -308,7 +308,7 @@ case "$tag" in
   pytorch-linux-noble-riscv64-py3.12-gcc14)
     GCC_VERSION=14
     PYTHON_VERSION=3.12
-    SKIP_SCCACHE_INSTALL=true # one of sscache dependency (libmount) depends on nix v0.14.1 which didn't support riscv64 yet
+    OPENBLAS=yes
     ;;
   *)
     # Catch-all for builds that are not hardcoded.

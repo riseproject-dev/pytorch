@@ -171,5 +171,7 @@ RUN if [ -n "${SKIP_LLVM_SRC_BUILD_INSTALL}" ]; then set -eu; rm -rf /opt/llvm; 
 ENV TORCH_NVCC_FLAGS "-Xfatbin -compress-all"
 ENV CUDA_PATH /usr/local/cuda
 
+RUN chown -R jenkins:jenkins /var/lib/jenkins/ci_env
+
 USER jenkins
 CMD ["bash"]

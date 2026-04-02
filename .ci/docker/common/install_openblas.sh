@@ -3,6 +3,15 @@
 
 set -ex
 
+if [[ $(uname -m) == "riscv64" ]]; then
+    # Can't build OpenBLAS from sources on riscv64, just use the one from package repositories
+    apt-get update -qq
+    apt-get install -qq -y --no-install-recommends libopenblas-dev
+    apt-get autoclean && apt-get clean
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    exit 0
+fi
+
 OPENBLAS_VERSION=${OPENBLAS_VERSION:-"v0.3.30"}
 
 # Clone OpenBLAS
