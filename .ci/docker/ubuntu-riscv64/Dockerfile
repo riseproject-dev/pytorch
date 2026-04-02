@@ -5,8 +5,8 @@ FROM ubuntu:${UBUNTU_VERSION} as base
 ARG UBUNTU_VERSION
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV PIP_INDEX_URL=https://gitlab.com/api/v4/projects/riseproject%2Fpython%2Fwheel_builder/packages/pypi/simple
-ENV UV_INDEX_URL=https://gitlab.com/api/v4/projects/riseproject%2Fpython%2Fwheel_builder/packages/pypi/simple
+ENV PIP_EXTRA_INDEX_URL=https://gitlab.com/api/v4/projects/riseproject%2Fpython%2Fwheel_builder/packages/pypi/simple
+ENV PIP_PREFER_BINARY=true
 
 ARG CLANG_VERSION
 
@@ -30,6 +30,16 @@ RUN bash ./install_user.sh && rm install_user.sh
 ARG KATEX
 COPY ./common/install_docs_reqs.sh install_docs_reqs.sh
 RUN bash ./install_docs_reqs.sh && rm install_docs_reqs.sh
+
+# Install conda and other packages (e.g., numpy, pytest)
+ARG PYTHON_VERSION
+ARG PIP_CMAKE
+# Put venv into the env vars so users don't need to activate it
+ENV PATH /var/lib/jenkins/ci_env/bin:$PATH
+ENV VIRTUAL_ENV /var/lib/jenkins/ci_env
+COPY requirements-ci.txt /opt/requirements-ci.txt
+COPY ./common/install_python.sh install_python.sh
+RUN bash ./install_python.sh && rm install_python.sh /opt/requirements-ci.txt
 
 # Install gcc
 ARG GCC_VERSION

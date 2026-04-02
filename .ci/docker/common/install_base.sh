@@ -61,7 +61,6 @@ install_ubuntu() {
     libasound2-dev \
     libsndfile-dev \
     ${maybe_libomp_dev} \
-    python-is-python3 \
     software-properties-common \
     wget \
     sudo \
@@ -155,3 +154,6 @@ else
   rm -rf valgrind_build
   alias valgrind="/usr/local/bin/valgrind"
 fi
+
+# Just add everything as a safe.directory for git since these will be used in multiple places with git
+git config --global --add safe.directory '*'
