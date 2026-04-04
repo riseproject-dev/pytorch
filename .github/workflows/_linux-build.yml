@@ -303,7 +303,7 @@ jobs:
           # shellcheck disable=SC2086
           container_name=$(docker run \
             -e BUILD_ENVIRONMENT="${BUILD_ENVIRONMENT}" \
-            -e MAX_JOBS="$(nproc --ignore=2)" \
+            -e MAX_JOBS="$(nproc)" \
             -e PR_NUMBER="${PR_NUMBER}" \
             -e SHA1="${SHA1}" \
             -e BRANCH="${BRANCH}" \
