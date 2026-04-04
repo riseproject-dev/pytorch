@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         description: Top-level label for what's being built/tested.
+      docker-registry:
+        required: true
+        type: string
+        description: Registry of the base docker image to build with
       docker-image-name:
         required: true
         type: string
@@ -171,15 +175,6 @@ jobs:
           cuda-version: ${{ inputs.cuda-version }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure sccache
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
-        with:
-          script: |
-            core.exportVariable('SCCACHE_GHA_ENABLED', 'on');
-            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-            core.exportVariable('ACTIONS_CACHE_SERVICE_V2', 'on'); // Force the github action v2
-
       # - name: Login to ECR
       #   if: inputs.build-environment != 'linux-s390x-binary-manywheel'
       #   uses: ./.github/actions/ecr-login
@@ -202,9 +197,9 @@ jobs:
         uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@manywheel-riscv64
         if: inputs.build-environment != 'linux-s390x-binary-manywheel'
         with:
-          docker-registry: ghcr.io/${{ github.repository_owner }}
+          docker-registry: ${{ inputs.docker-registry }}
           docker-image-name: ${{ inputs.docker-image-name }}
-          ghcr-pat: ${{ secrets.GHCR_PAT }}
+          scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
 
       - name: Use following to pull public copy of the image
         id: print-ghcr-mirror
@@ -262,8 +257,11 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           SHA1: ${{ github.event.pull_request.head.sha || github.sha }}
           # Do not set SCCACHE_S3_KEY_PREFIX to share the cache between all build jobs
-          SCCACHE_BUCKET: ossci-compiler-cache-circleci-v2
-          SCCACHE_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.SCW_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SCW_SECRET_KEY }}
+          SCCACHE_BUCKET: rise-pytorch-ci-cache
+          SCCACHE_REGION: fr-par
+          SCCACHE_ENDPOINT: https://s3.fr-par.scw.cloud
           XLA_CLANG_CACHE_S3_BUCKET_NAME: ossci-compiler-clang-cache-circleci-xla
           PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
           TORCH_CUDA_ARCH_LIST: ${{ inputs.cuda-arch-list }}
@@ -309,6 +307,11 @@ jobs:
             -e PR_NUMBER="${PR_NUMBER}" \
             -e SHA1="${SHA1}" \
             -e BRANCH="${BRANCH}" \
+            -e AWS_ACCESS_KEY_ID \
+            -e AWS_SECRET_ACCESS_KEY \
+            -e SCCACHE_BUCKET="${SCCACHE_BUCKET}" \
+            -e SCCACHE_REGION="${SCCACHE_REGION}" \
+            -e SCCACHE_ENDPOINT="${SCCACHE_ENDPOINT}" \
             -e XLA_CUDA="${XLA_CUDA}" \
             -e XLA_CLANG_CACHE_S3_BUCKET_NAME="${XLA_CLANG_CACHE_S3_BUCKET_NAME}" \
             -e SKIP_SCCACHE_INITIALIZATION=1 \
@@ -318,7 +321,6 @@ jobs:
             -e HUGGING_FACE_HUB_TOKEN="${HUGGING_FACE_HUB_TOKEN}" \
             -e BUILD_ADDITIONAL_PACKAGES="${BUILD_ADDITIONAL_PACKAGES}" \
             -e RUNNER="${RUNNER}" \
-            -e SCCACHE_GHA_ENABLED="${SCCACHE_GHA_ENABLED}" \
             -e ACTIONS_RESULTS_URL="${ACTIONS_RESULTS_URL}" \
             -e ACTIONS_RUNTIME_TOKEN="${ACTIONS_RUNTIME_TOKEN}" \
             -e ACTIONS_CACHE_SERVICE_V2="${ACTIONS_CACHE_SERVICE_V2}" \

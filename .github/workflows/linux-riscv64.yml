@@ -40,6 +40,7 @@ jobs:
     with:
       runner_prefix: ${{ needs.get-label-type.outputs.label-type }}
       build-environment: linux-noble-riscv64-py3.12
+      docker-registry: rg.fr-par.scw.cloud/rise-pytorch-ci-registry
       docker-image-name: ci-image:pytorch-linux-noble-riscv64-py3.12-gcc14
       runner: linux.riscv64.2xlarge.ephemeral
       test-matrix: |
