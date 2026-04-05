@@ -324,6 +324,7 @@ jobs:
             -e ACTIONS_RESULTS_URL="${ACTIONS_RESULTS_URL}" \
             -e ACTIONS_RUNTIME_TOKEN="${ACTIONS_RUNTIME_TOKEN}" \
             -e ACTIONS_CACHE_SERVICE_V2="${ACTIONS_CACHE_SERVICE_V2}" \
+            -e VERBOSE=1
             --memory="${TOTAL_AVAILABLE_MEMORY_IN_GB%.*}g" \
             --memory-swap="${TOTAL_MEMORY_WITH_SWAP}g" \
             --env-file="/tmp/github_env_${GITHUB_RUN_ID}" \
