@@ -22,9 +22,6 @@ inputs:
   DOCKER_ID:
     description: Docker ID for authentication
     required: true
-  scw-secret-key:
-    description: Scaleway Secret Key
-    required: false
   ghcr-pat:
     description: The GHCR_PAT token to access ghcr.io
     required: false
@@ -46,7 +43,6 @@ runs:
         docker-registry: ${{ inputs.docker-registry }}
         always-rebuild: true
         push: true
-        scw-secret-key: ${{ inputs.scw-secret-key }}
         ghcr-pat: ${{ inputs.ghcr-pat }}
 
     - name: Tag and (if WITH_PUSH) push docker image to ${{ inputs.docker-registry }}

@@ -3,13 +3,12 @@ name: linux-riscv64
 on:
   push:
     branches:
-      - manywheel-riscv64-1
-    # branches:
-    #   - main
-    #   - release/*
-    # tags:
-    #   - ciflow/linux-riscv64/*
-    #   - ciflow/trunk/*
+      - main
+      - release/*
+      - manywheel-riscv64-1 # DEBUG
+    tags:
+      - ciflow/linux-riscv64/*
+      - ciflow/trunk/*
   workflow_dispatch:
 
 concurrency:

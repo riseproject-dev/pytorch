@@ -117,15 +117,18 @@ jobs:
       - name: Build docker image
         id: build-docker-image
         uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@manywheel-riscv64
+        env:
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
         with:
           docker-registry: rg.fr-par.scw.cloud/rise-pytorch-ci-registry
           docker-image-name: ci-image:${{ matrix.docker-image-name }}
-          scw-secret-key: ${{ secrets.SCW_SECRET_KEY }}
           always-rebuild: true
           push: true
 
       - name: Pull docker image
         uses: riseproject-dev/test-infra/.github/actions/pull-docker-image@manywheel-riscv64
+        env:
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
         with:
           docker-registry: rg.fr-par.scw.cloud/rise-pytorch-ci-registry
           docker-image: ${{ steps.build-docker-image.outputs.docker-image }}
