@@ -84,6 +84,7 @@ fi
 if [[ "$BUILD_ENVIRONMENT" == *riscv64* ]]; then
   export USE_CUDA=0
   export USE_MKLDNN=0
+  export CFLAGS='-Wno-deprecated-declarations'
 fi
 
 # Use special scripts for Android builds
