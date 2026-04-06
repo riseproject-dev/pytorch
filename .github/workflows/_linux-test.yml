@@ -137,6 +137,13 @@ jobs:
       #       All testing is done inside the container, to start an interactive session run:
       #         docker exec -it $(docker container ps --format '{{.ID}}') bash
 
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.build-environment }}
+          run-id: 24031188121
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Setup Python
         if: contains(matrix.runner, 'b200')
         uses: riseproject-dev/setup-python@main # v5.6.0
@@ -155,15 +162,6 @@ jobs:
           cuda-version: ${{ inputs.cuda-version }}
           submodules: 'false'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      # Apply the filter logic to the build step too if the test-config label is already there
-      - name: Select all requested test configurations (if the test matrix is available)
-        id: filter
-        uses: ./.github/actions/filter-test-configs
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-matrix: ${{ inputs.test-matrix }}
-          job-name: ${{ steps.setup-linux.outputs.job-name }}
 
       # - name: Check TPU Availability
       #   id: check-tpu
@@ -245,11 +243,14 @@ jobs:
           echo "monitor-script-pid=${!}" >> "${GITHUB_OUTPUT}"
 
       - name: Download build artifacts
-        uses: ./.github/actions/download-build-artifacts
+    #   uses: ./.github/actions/download-build-artifacts
+        uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.build-environment }}
-          s3-bucket: ${{ inputs.s3-bucket }}
-          use-gha: ${{ inputs.use-gha }}
+          run-id: 24031188121
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     s3-bucket: ${{ inputs.s3-bucket }}
+      #     use-gha: ${{ inputs.use-gha }}
 
       - name: Download TD artifacts
         continue-on-error: true
@@ -303,7 +304,7 @@ jobs:
         uses: ./.github/actions/filter-test-configs
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-matrix: ${{ steps.filter.outputs.test-matrix }}
+          test-matrix: ${{ inputs.test-matrix }}
           job-name: ${{ steps.setup-linux.outputs.job-name }}
 
       - name: Set Test step time
