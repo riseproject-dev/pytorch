@@ -121,7 +121,7 @@ if [[ "$BUILD_ENVIRONMENT" == *riscv64* ]]; then
   #   225 |     atomic_exchange(shared_ptr<_Tp>* __p, shared_ptr<_Tp> __r)
   #       |     ^~~~~~~~~~~~~~~
   # cc1plus: all warnings being treated as errors
-  export CFLAGS='${CFLAGS} -Wno-error=deprecated-declarations'
+  export CFLAGS="${CFLAGS} -Wno-error=deprecated-declarations"
 fi
 
 # Use special scripts for Android builds
