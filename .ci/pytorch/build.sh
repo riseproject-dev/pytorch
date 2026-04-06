@@ -238,7 +238,7 @@ if [[ "$BUILD_ENVIRONMENT" != *rocm* && "$BUILD_ENVIRONMENT" != *s390x* && -d /v
     echo "sudo may print the following warning message that can be ignored. The chown command will still run."
     echo "    sudo: setrlimit(RLIMIT_STACK): Operation not permitted"
     echo "For more details refer to https://github.com/sudo-project/sudo/issues/42"
-    sudo chown -R "$WORKSPACE_ORIGINAL_OWNER_ID" /var/lib/jenkins/workspace
+    sudo chown -R "$WORKSPACE_ORIGINAL_OWNER_ID" /var/lib/jenkins/workspace || true
   }
   # Disable shellcheck SC2064 as we want to parse the original owner immediately.
   # shellcheck disable=SC2064
