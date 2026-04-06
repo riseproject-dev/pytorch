@@ -58,4 +58,6 @@ jobs:
       build-environment: ${{ needs.linux-noble-riscv64-py3_12-build.outputs.build-environment }}
       docker-image: ${{ needs.linux-noble-riscv64-py3_12-build.outputs.docker-image }}
       test-matrix: ${{ needs.linux-noble-riscv64-py3_12-build.outputs.test-matrix }}
+      use-gha: true
+      timeout-minutes: 360
     secrets: inherit
