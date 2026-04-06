@@ -156,14 +156,14 @@ jobs:
       test-matrix: ${{ steps.filter.outputs.test-matrix }}
       build-environment: ${{ inputs.build-environment }}
     steps:
-      - name: Setup SSH (Click me for login details)
-        uses: pytorch/test-infra/.github/actions/setup-ssh@main
-        if: inputs.build-environment != 'linux-s390x-binary-manywheel'
-        with:
-          github-secret: ${{ secrets.GITHUB_TOKEN }}
-          instructions: |
-            Build is done inside the container, to start an interactive session run:
-              docker exec -it $(docker container ps --format '{{.ID}}') bash
+      # - name: Setup SSH (Click me for login details)
+      #   uses: pytorch/test-infra/.github/actions/setup-ssh@main
+      #   if: inputs.build-environment != 'linux-s390x-binary-manywheel'
+      #   with:
+      #     github-secret: ${{ secrets.GITHUB_TOKEN }}
+      #     instructions: |
+      #       Build is done inside the container, to start an interactive session run:
+      #         docker exec -it $(docker container ps --format '{{.ID}}') bash
 
       - name: Setup Linux
         id: setup-linux

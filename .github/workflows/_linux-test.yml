@@ -11,6 +11,10 @@ on:
         required: true
         type: string
         description: JSON description of what test configs to run.
+      docker-registry:
+        required: true
+        type: string
+        description: Registry of the base docker image to build with
       docker-image:
         required: true
         type: string
@@ -152,6 +156,15 @@ jobs:
           submodules: 'false'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Apply the filter logic to the build step too if the test-config label is already there
+      - name: Select all requested test configurations (if the test matrix is available)
+        id: filter
+        uses: ./.github/actions/filter-test-configs
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          test-matrix: ${{ inputs.test-matrix }}
+          job-name: ${{ steps.setup-linux.outputs.job-name }}
+
       # - name: Check TPU Availability
       #   id: check-tpu
       #   uses: ./.github/actions/check-tpu
@@ -174,6 +187,7 @@ jobs:
         uses: pytorch/test-infra/.github/actions/calculate-docker-image@main
         if: inputs.build-environment != 'linux-s390x-binary-manywheel'
         with:
+          docker-registry: ${{ inputs.docker-registry }}
           docker-image-name: ${{ inputs.docker-image }}
 
       - name: Use following to pull public copy of the image
@@ -289,7 +303,7 @@ jobs:
         uses: ./.github/actions/filter-test-configs
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-matrix: ${{ inputs.test-matrix }}
+          test-matrix: ${{ steps.filter.outputs.test-matrix }}
           job-name: ${{ steps.setup-linux.outputs.job-name }}
 
       - name: Set Test step time
@@ -629,11 +643,16 @@ jobs:
           role-duration-seconds: 18000
 
       - name: Download build artifacts
-        uses: pytorch/pytorch/.github/actions/download-build-artifacts@main
+        uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.build-environment }}
-          s3-bucket: ${{ inputs.s3-bucket }}
-          use-gha: ${{ inputs.use-gha }}
+          run-id: 24031188121
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        # uses: pytorch/pytorch/.github/actions/download-build-artifacts@main
+        # with:
+        #   name: ${{ inputs.build-environment }}
+        #   s3-bucket: ${{ inputs.s3-bucket }}
+        #   use-gha: ${{ inputs.use-gha }}
 
       - name: Download TD artifacts
         continue-on-error: true
