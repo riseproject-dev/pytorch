@@ -85,6 +85,7 @@ jobs:
           - docker-image-name: pytorch-linux-jammy-aarch64-py3.10-gcc13-inductor-benchmarks
             runner: linux.arm64.m7g.4xlarge
             timeout-minutes: 600
+          - docker-image-name: pytorch-linux-noble-riscv64-py3.12-gcc14
     # Docker uploads fail from LF runners, see https://github.com/pytorch/pytorch/pull/137358
     # runs-on: "${{ needs.get-label-type.outputs.label-type }}${{ matrix.runner }}"
     runs-on: "${{ matrix.runner }}"
@@ -95,6 +96,9 @@ jobs:
           echo "${GITHUB_WORKSPACE}"
           sudo rm -rf "${GITHUB_WORKSPACE}"
           mkdir "${GITHUB_WORKSPACE}"
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
 
       - name: Setup Linux
         uses: pytorch/pytorch/.github/actions/setup-linux@main
