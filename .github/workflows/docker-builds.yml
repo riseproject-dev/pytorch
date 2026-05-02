@@ -120,6 +120,7 @@ jobs:
           docker-username: nologin
           docker-password: ${{ secrets.SCW_SECRET_KEY }}
           docker-image-name: ci-image:${{ matrix.docker-image-name }}
+          docker-build-timeout-minutes: 180
           always-rebuild: true
           push: true
 
