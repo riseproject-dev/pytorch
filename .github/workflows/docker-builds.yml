@@ -44,7 +44,7 @@ jobs:
   docker-build:
     environment: ${{ (github.ref == 'refs/heads/main' || startsWith(github.event.ref, 'refs/tags/v')) && 'docker-build' || '' }}
     needs: get-label-type
-    timeout-minutes: 240
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
@@ -120,7 +120,7 @@ jobs:
           docker-username: nologin
           docker-password: ${{ secrets.SCW_SECRET_KEY }}
           docker-image-name: ci-image:${{ matrix.docker-image-name }}
-          docker-build-timeout-minutes: 180
+          docker-build-timeout-minutes: 300
           always-rebuild: true
           push: true
 
