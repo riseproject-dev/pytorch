@@ -12,6 +12,7 @@ on:
       - main
       - release/*
       - landchecks/*
+      - build-and-test-on-riscv64* # DEBUG
     paths:
       - .ci/docker/**
       - .github/workflows/docker-builds.yml
@@ -31,9 +32,9 @@ permissions: read-all
 
 jobs:
   get-label-type:
-    if: github.repository_owner == 'pytorch'
+    # if: github.repository_owner == 'pytorch'
     name: get-label-type
-    uses: pytorch/pytorch/.github/workflows/_runner-determinator.yml@main
+    uses: riseproject-dev/pytorch/.github/workflows/_runner-determinator.yml@build-and-test-on-riscv64
     with:
       triggering_actor: ${{ github.triggering_actor }}
       issue_owner: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
@@ -86,6 +87,9 @@ jobs:
             runner: linux.arm64.m7g.4xlarge
             timeout-minutes: 600
           - docker-image-name: pytorch-linux-noble-riscv64-py3.12-gcc14
+            runner: ubuntu-latest # DEBUG
+          - docker-image-name: pytorch-linux-noble-riscv64-py3.12-gcc14
+            runner: ubuntu-24.04-riscv
     # Docker uploads fail from LF runners, see https://github.com/pytorch/pytorch/pull/137358
     # runs-on: "${{ needs.get-label-type.outputs.label-type }}${{ matrix.runner }}"
     runs-on: "${{ matrix.runner }}"
@@ -101,24 +105,30 @@ jobs:
         uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
 
       - name: Setup Linux
-        uses: pytorch/pytorch/.github/actions/setup-linux@main
+        uses: riseproject-dev/pytorch/.github/actions/setup-linux@build-and-test-on-riscv64
         with:
           submodules: 'false'
 
-      - name: Login to ECR
-        uses: ./.github/actions/ecr-login
+      # - name: Login to ECR
+      #   uses: ./.github/actions/ecr-login
 
       - name: Build docker image
         id: build-docker-image
-        uses: pytorch/test-infra/.github/actions/calculate-docker-image@main
+        uses: riseproject-dev/test-infra/.github/actions/calculate-docker-image@main
         with:
+          docker-registry: rg.fr-par.scw.cloud/rise-pytorch-ci-registry
+          docker-username: nologin
+          docker-password: ${{ secrets.SCW_SECRET_KEY }}
           docker-image-name: ci-image:${{ matrix.docker-image-name }}
           always-rebuild: true
           push: true
 
       - name: Pull docker image
-        uses: pytorch/test-infra/.github/actions/pull-docker-image@main
+        uses: riseproject-dev/test-infra/.github/actions/pull-docker-image@main
         with:
+          docker-registry: rg.fr-par.scw.cloud/rise-pytorch-ci-registry
+          docker-username: nologin
+          docker-password: ${{ secrets.SCW_SECRET_KEY }}
           docker-image: ${{ steps.build-docker-image.outputs.docker-image }}
 
       - name: Generate output
@@ -150,7 +160,7 @@ jobs:
           max_attempts: 5
           retry_wait_seconds: 90
           command: |
-            ghcr_image="ghcr.io/pytorch/ci-image"
+            ghcr_image="ghcr.io/${{ github.repository }}/ci-image"
             tag=${ECR_DOCKER_IMAGE##*:}
             # Push docker image to the ghcr.io
             echo $GHCR_PAT | docker login ghcr.io -u pytorch --password-stdin
@@ -160,11 +170,11 @@ jobs:
             docker tag "${ECR_DOCKER_IMAGE}" "${ghcr_image}:${{ matrix.docker-image-name }}"
             docker push "${ghcr_image}:${{ matrix.docker-image-name }}"
 
-      - name: Chown workspace
-        uses: ./.github/actions/chown-workspace
-        with:
-          ALPINE_IMAGE: 308535385114.dkr.ecr.us-east-1.amazonaws.com/${{ contains(matrix.runner, 'arm64') && 'arm64v8' || 'tool' }}/alpine
-        if: always()
+      # - name: Chown workspace
+      #   uses: ./.github/actions/chown-workspace
+      #   with:
+      #     ALPINE_IMAGE: 308535385114.dkr.ecr.us-east-1.amazonaws.com/${{ contains(matrix.runner, 'arm64') && 'arm64v8' || 'tool' }}/alpine
+      #   if: always()
 
       - name: Teardown Linux
         uses: pytorch/test-infra/.github/actions/teardown-linux@main
