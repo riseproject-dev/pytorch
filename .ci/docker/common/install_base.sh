@@ -31,7 +31,7 @@ install_ubuntu() {
   # Install prerequisites for add-apt-repository (needs gpg-agent for PPA key import)
   apt-get install -y --no-install-recommends software-properties-common gpg-agent
   # Add git-core PPA for a newer version of git
-  add-apt-repository ppa:git-core/ppa -y
+  # add-apt-repository ppa:git-core/ppa -y
   apt-get update
   # TODO: Some of these may not be necessary
   deploy_deps="libffi-dev libbz2-dev libreadline-dev libncurses5-dev libncursesw5-dev libgdbm-dev libsqlite3-dev uuid-dev tk-dev"
