@@ -46,6 +46,7 @@ install_ubuntu() {
     automake \
     build-essential \
     ca-certificates \
+    ccache \
     curl \
     git \
     libatlas-base-dev \

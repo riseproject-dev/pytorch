@@ -11,6 +11,8 @@ ENV PIP_PREFER_BINARY=true
 ARG GCC_VERSION
 ARG CLANG_VERSION
 
+ARG CCACHE_DIR=/.ccache
+
 # Include BUILD_ENVIRONMENT environment variable in image
 ARG BUILD_ENVIRONMENT
 ENV BUILD_ENVIRONMENT ${BUILD_ENVIRONMENT}
@@ -44,7 +46,7 @@ ENV PATH /var/lib/jenkins/ci_env/bin:$PATH
 ENV VIRTUAL_ENV /var/lib/jenkins/ci_env
 COPY requirements-ci.txt /opt/requirements-ci.txt
 COPY ./common/install_python.sh install_python.sh
-RUN bash ./install_python.sh && rm install_python.sh /opt/requirements-ci.txt
+RUN --mount=type=cache,target=${CCACHE_DIR} bash ./install_python.sh && rm install_python.sh /opt/requirements-ci.txt
 
 # Install gcc
 ARG GCC_VERSION
@@ -124,7 +126,7 @@ ENV INSTALLED_ACL ${ACL}
 ARG OPENBLAS
 ARG OPENBLAS_VERSION
 COPY ./common/install_openblas.sh install_openblas.sh
-RUN if [ -n "${OPENBLAS}" ]; then bash ./install_openblas.sh; fi
+RUN --mount=type=cache,target=${CCACHE_DIR} if [ -n "${OPENBLAS}" ]; then bash ./install_openblas.sh; fi
 RUN rm install_openblas.sh
 ENV INSTALLED_OPENBLAS ${OPENBLAS}
 

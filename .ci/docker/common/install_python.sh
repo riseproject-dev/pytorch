@@ -11,5 +11,11 @@ ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python
 python -m venv /var/lib/jenkins/ci_env
 source /var/lib/jenkins/ci_env/bin/activate
 
+if which ccache 2>/dev/null; then
+    export CC="ccache gcc"
+    export CXX="ccache g++"
+    export FC="ccache gfortran"
+fi
+
 python -mpip install --upgrade pip
 python -mpip install -r /opt/requirements-ci.txt

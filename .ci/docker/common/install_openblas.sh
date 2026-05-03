@@ -3,19 +3,20 @@
 
 set -ex
 
+if which ccache 2>/dev/null; then
+    export CC="ccache gcc"
+    export CXX="ccache g++"
+    export FC="ccache gfortran"
+fi
+
 OPENBLAS_VERSION=${OPENBLAS_VERSION:-"v0.3.30"}
 OPENBLAS_CHECKOUT_DIR="OpenBLAS"
 
 if [[ "$BUILD_ENVIRONMENT" == *riscv64* ]]; then
-  # FIXME: build OpenBLAS from scratch, it just takes too long right now
-  apt-get update
-  apt-get install -y libopenblas-dev
-
-  # Cleanup package manager
-  apt-get autoclean && apt-get clean
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-  exit 0
+  # FIXME: Once OPENBLAS_VERSION >= v0.3.34, we can enable the following flag
+  # https://github.com/OpenMathLib/OpenBLAS/commit/c8dbfd74e2aa40563b11989d16aeb9b3828c16f4
+  OPENBLAS_BUILD_BFLOAT16=0 # Requires GCC_VERSION >= 15.2
+  OPENBLAS_BUILD_HFLOAT16=0
 elif [[ "$BUILD_ENVIRONMENT" == *aarch64* ]]; then
   OPENBLAS_TARGET="ARMV8"
 fi
@@ -24,7 +25,6 @@ fi
 git clone https://github.com/OpenMathLib/OpenBLAS.git -b "${OPENBLAS_VERSION}" --depth 1 --shallow-submodules "${OPENBLAS_CHECKOUT_DIR}"
 
 OPENBLAS_BUILD_FLAGS="
-CC=gcc
 NUM_THREADS=128
 USE_OPENMP=1
 NO_SHARED=0
@@ -32,8 +32,8 @@ DYNAMIC_ARCH=1
 TARGET=${OPENBLAS_TARGET}
 CFLAGS=-O3
 FFLAGS=-Wno-maybe-uninitialized
-BUILD_BFLOAT16=1
-BUILD_HFLOAT16=1
+BUILD_BFLOAT16=${OPENBLAS_BUILD_BFLOAT16:-1}
+BUILD_HFLOAT16=${OPENBLAS_BUILD_HFLOAT16:-1}
 BUILD_SINGLE=1
 BUILD_DOUBLE=1
 BUILD_COMPLEX=1
