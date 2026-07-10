@@ -43,6 +43,8 @@ XPU_ARCHES = ["xpu"]
 
 CPU_AARCH64_ARCH = ["cpu-aarch64"]
 
+CPU_RISCV64_ARCH = ["cpu-riscv64"]
+
 CPU_S390X_ARCH = ["cpu-s390x"]
 
 CUDA_AARCH64_ARCHES = [
@@ -277,6 +279,8 @@ def arch_type(arch_version: str) -> str:
         return "xpu"
     elif arch_version in CPU_AARCH64_ARCH:
         return "cpu-aarch64"
+    elif arch_version in CPU_RISCV64_ARCH:
+        return "cpu-riscv64"
     elif arch_version in CPU_S390X_ARCH:
         return "cpu-s390x"
     elif arch_version in CUDA_AARCH64_ARCHES:
@@ -297,6 +301,7 @@ WHEEL_CONTAINER_IMAGES = {
     "xpu": "manylinux2_28-builder:xpu",
     "cpu": "manylinux2_28-builder:cpu",
     "cpu-aarch64": "manylinux2_28_aarch64-builder:cpu-aarch64",
+    "cpu-riscv64": "manylinux2_39_riscv64-builder:cpu-riscv64",
     "cpu-s390x": "manylinuxs390x-builder:cpu-s390x",
 }
 
@@ -319,6 +324,7 @@ def translate_desired_cuda(gpu_arch_type: str, gpu_arch_version: str) -> str:
     return {
         "cpu": "cpu",
         "cpu-aarch64": "cpu",
+        "cpu-riscv64": "cpu",
         "cpu-s390x": "cpu",
         "cuda": f"cu{gpu_arch_version.replace('.', '')}",
         "cuda-aarch64": f"cu{gpu_arch_version.replace('-aarch64', '').replace('.', '')}",
@@ -380,7 +386,7 @@ def generate_wheels_matrix(
     python_versions: list[str] | None = None,
 ) -> list[dict[str, str]]:
     package_type = "wheel"
-    if os == "linux" or os == "linux-aarch64" or os == "linux-s390x":
+    if os == "linux" or os == "linux-aarch64" or os == "linux-riscv64" or os == "linux-s390x":
         # NOTE: We only build manywheel packages for x86_64 and aarch64 and s390x linux
         package_type = "manywheel"
 
@@ -398,6 +404,10 @@ def generate_wheels_matrix(
             # Separate new if as the CPU type is different and
             # uses different build/test scripts
             arches = CPU_AARCH64_ARCH + CUDA_AARCH64_ARCHES
+        elif os == "linux-riscv64":
+            # Separate new if as the CPU type is different and
+            # uses different build/test scripts
+            arches = CPU_RISCV64_ARCH
         elif os == "linux-s390x":
             # Only want the one arch as the CPU type is different and
             # uses different build/test scripts
@@ -411,6 +421,7 @@ def generate_wheels_matrix(
                 ""
                 if arch_version == "cpu"
                 or arch_version == "cpu-aarch64"
+                or arch_version == "cpu-riscv64"
                 or arch_version == "cpu-s390x"
                 or arch_version == "xpu"
                 else arch_version
@@ -420,6 +431,7 @@ def generate_wheels_matrix(
             if os not in [
                 "linux",
                 "linux-aarch64",
+                "linux-riscv64",
                 "linux-s390x",
                 "macos-arm64",
                 "windows",
@@ -427,7 +439,7 @@ def generate_wheels_matrix(
                 continue
 
             # TODO: Enable python 3.15 on non linux OSes
-            if os not in ["linux", "linux-aarch64"] and (
+            if os not in ["linux", "linux-aarch64", "linux-riscv64"] and (
                 python_version == "3.15" or python_version == "3.15t"
             ):
                 continue
