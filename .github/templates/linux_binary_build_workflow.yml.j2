@@ -55,6 +55,13 @@ name: !{{ build_environment }}
   {%- set timeout_minutes = 420 %}
   {%- set runner_prefix = "" %}
   {%- set use_container_directive = true %}
+{%- elif "riscv64" in build_environment %}
+  {%- set build_runs_on = "ubuntu-24.04-riscv" %}
+  {%- set test_runs_on  = "ubuntu-24.04-riscv" %}
+  {%- set alpine_image  = "riscv64/alpine" %}
+  {%- set timeout_minutes = 1440 %}
+  {%- set runner_prefix = "" %}
+  {%- set use_container_directive = true %}
 {%- elif "s390x" in build_environment %}
   {%- set build_runs_on = "linux.s390x" %}
   {%- set test_runs_on  = "linux.s390x" %}
@@ -322,6 +329,8 @@ jobs:
         {%- for config in test_standard_configs %}
           {%- if "aarch64" in build_environment %}
           {%- set _runs_on = "linux.arm64.2xlarge" %}
+          {%- elif "riscv64" in build_environment %}
+          {%- set _runs_on = "ubuntu-24.04-riscv" %}
           {%- elif "s390x" in build_environment %}
           {%- set _runs_on = "linux.s390x" %}
           {%- elif config['gpu_arch_type'] == "cuda" %}
