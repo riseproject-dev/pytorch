@@ -43,6 +43,12 @@ case ${image} in
         DOCKER_GPU_BUILD_ARG=" --build-arg DEVTOOLSET_VERSION=13"
         MANY_LINUX_VERSION="2_28_aarch64"
         ;;
+    manylinux2_39_riscv64-builder:cpu-riscv64)
+        TARGET=final
+        GPU_IMAGE=riscv64/almalinux:10-kitten
+        DOCKER_GPU_BUILD_ARG=" --build-arg DEVTOOLSET_VERSION=14"
+        MANY_LINUX_VERSION="2_39_riscv64"
+        ;;
     manylinuxs390x-builder:cpu-s390x)
         TARGET=final
         GPU_IMAGE=s390x/almalinux:8
